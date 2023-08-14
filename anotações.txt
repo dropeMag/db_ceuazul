@@ -1,0 +1,65 @@
+Agradecimentos:
+- Reconhecimento e agradecimento às pessoas envolvidas no projeto.
+- Agradecer ao Chat GPT, PowerTuning, Hashtag
+
+
+Introdução:
+- Propósito da documentação (demonstrar as habilidades teóricas adquiridas).
+- Escopo do projeto de DBA (atender um cliente fictício).
+- Objetivos do sistema de banco de dados (a empresa é nova e quer um sistema ágil e que seja simples na disponibilização de insights).
+
+
+Descrição da Pousada:
+- Características e instalações da pousada fictícia.
+- Tipos de acomodações oferecidas.
+- Serviços e comodidades disponíveis.
+
+
+Análise de Requisitos:
+- Levantamento das necessidades da pousada em termos de banco de dados.
+- Requisitos funcionais e não funcionais.
+
+
+Projeto da Database e Arquitetura:
+- Modelo conceitual do banco de dados.
+- Modelo lógico e físico do banco de dados.
+- Esquema do banco de dados e tabelas.
+
+
+Modelos e Diagramas:
+- Diagrama Entidade-Relacionamento (DER) ou Diagrama de Classes.
+- Diagramas de relacionamentos entre tabelas.
+- Outros diagramas relevantes, como diagrama de fluxo de dados.
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+Estrutura do Banco e das Tabelas:
+- Explicar o COLLATE escolhido.
+- Descrição detalhada de cada tabela do banco de dados.
+- Atributos, tipos de dados e restrições de cada tabela.
+
+
+Segurança e Privacidade:
+- Medidas de segurança implementadas para proteger os dados dos hóspedes.
+- Políticas de privacidade e conformidade com regulamentos.
+
+
+Testagens:
+- Plano de testes para verificar a integridade e a funcionalidade do banco de dados.
+- Resultados dos testes realizados.
+- Análise dos dados gerados e estruturação de planos de ação para a empresa com base nos insights.
+
+
+Conclusão:
+- Críticas e avaliações gerais do projeto.
+- Considerações finais sobre o projeto e seus resultados.
+- Lições aprendidas e possíveis melhorias futuras.
+
+
+Referências:
+- Listagem de fontes e referências consultadas durante o projeto.
+
+
+Apêndices:
+- Documentação técnica adicional ou detalhes adicionais sobre o projeto.
