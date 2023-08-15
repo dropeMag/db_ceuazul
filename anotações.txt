@@ -30,14 +30,14 @@ Modelos e Diagramas:
 - Diagrama Entidade-Relacionamento (DER) ou Diagrama de Classes.
 - Diagramas de relacionamentos entre tabelas.
 - Outros diagramas relevantes, como diagrama de fluxo de dados.
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
 Estrutura do Banco e das Tabelas:
 - Explicar o COLLATE escolhido.
 - Descrição detalhada de cada tabela do banco de dados.
 - Atributos, tipos de dados e restrições de cada tabela.
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
 Segurança e Privacidade:
