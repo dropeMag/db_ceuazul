@@ -42,6 +42,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 Segurança e Privacidade:
 - Medidas de segurança implementadas para proteger os dados dos hóspedes.
+- Máscara de Dados Dinâmicos.
+- Fazer testes de controle tanto com trigger quanto com procedure (anote os resultados e documente).
 - Políticas de privacidade e conformidade com regulamentos.
 
 
@@ -63,3 +65,18 @@ Referências:
 
 Apêndices:
 - Documentação técnica adicional ou detalhes adicionais sobre o projeto.
+
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+- Arrumar tb_telefone e tb_endereco: id não pode ser tinyiny, deve ser int! Arrumas em suas tabelas e nas tabelas tb_funcionario e tb_hospede.
+
+- mudar o id_funcionario de TINYINT para SMALLINT.
+
+- mudar o id_hospede de tinyint para INT
+
+- Fazer um lógico para cada tabela.
+
+- Colocar o valor de VARCHAR de "país" em TB_ENDERECO

@@ -1,0 +1,189 @@
+CREATE TABLE sch_funcionario.tb_funcao_funcionario(
+	id_funcao TINYINT IDENTITY NOT NULL,
+	descricao VARCHAR(20) NOT NULL,
+CONSTRAINT pk_id_funcao
+	PRIMARY KEY (id_funcao)
+)
+GO
+
+
+CREATE TABLE sch_funcionario.tb_deposito_funcionario(
+	id_deposito SMALLINT IDENTITY NOT NULL,
+	numero_conta INT NOT NULL,
+	codigo_agencia SMALLINT NOT NULL,
+	tipo_conta TINYINT NOT NULL,
+	nome_banco VARCHAR(15) NOT NULL,
+CONSTRAINT pk_id_deposito
+	PRIMARY KEY (id_deposito)
+)
+GO
+
+
+CREATE TABLE sch_pessoa.tb_telefone_pessoa(
+	id_telefone INT IDENTITY NOT NULL,
+	codigo_pais SMALLINT NOT NULL,
+	codigo_area SMALLINT NOT NULL,
+	telefone INT NOT NULL,
+	observacao VARCHAR(50),
+CONSTRAINT pk_id_telefone
+	PRIMARY KEY (id_telefone)
+)
+GO
+
+
+CREATE TABLE sch_pessoa.tb_endereco_pessoa(
+	id_endereco INT IDENTITY NOT NULL,
+	pais VARCHAR(60) NOT NULL,
+	estado VARCHAR(60) NOT NULL,
+	cidade VARCHAR(60) NOT NULL,
+	bairro VARCHAR(60) NOT NULL,
+	rua INT NOT NULL,
+	numero INT NOT NULL,
+	complemento VARCHAR(20) NOT NULL,
+	cep INT NOT NULL,
+	observacao VARCHAR(50),
+CONSTRAINT pk_id_endereco
+	PRIMARY KEY (id_endereco)
+)
+GO
+
+
+CREATE TABLE sch_funcionario.tb_funcionario(
+	id_funcionario SMALLINT IDENTITY NOT NULL,
+	nome VARCHAR(20) NOT NULL,
+	sobrenome VARCHAR(60) NOT NULL,
+	dt_nascimento DATE NOT NULL,
+	cpf BIGINT MASKED WITH (FUNCTION = 'partial(2, "x.xxx.xx-", 2)') NOT NULL,
+	rg INT MASKED WITH (FUNCTION = 'partial(2, "xxxxx", 1)') NOT NULL,
+	sexo CHAR(1) CHECK(LOWER(sexo) IN ('m', 'f')) NOT NULL,
+	email VARCHAR(50) MASKED WITH (FUNCTION = 'email()') NOT NULL,
+	id_telefone INT MASKED WITH (FUNCTION = 'default()') NOT NULL,
+	id_endereco INT MASKED WITH (FUNCTION = 'default()') NOT NULL,
+	tipo_funcao TINYINT NOT NULL,
+	conta_deposito SMALLINT MASKED WITH (FUNCTION = 'partial(0, "0", 0)') NOT NULL,
+CONSTRAINT pk_id_funcionario
+	PRIMARY KEY (id_funcionario),
+CONSTRAINT uk_cpf_func
+	UNIQUE (cpf),
+CONSTRAINT fk_id_tel_func
+	FOREIGN KEY (id_telefone)
+	REFERENCES sch_pessoa.tb_telefone_pessoa(id_telefone),
+CONSTRAINT fk_id_end_func
+	FOREIGN KEY (id_endereco)
+	REFERENCES sch_pessoa.tb_endereco_pessoa(id_endereco),
+CONSTRAINT fk_tipo_funcao
+	FOREIGN KEY (tipo_funcao)
+	REFERENCES sch_funcionario.tb_funcao_funcionario(id_funcao),
+CONSTRAINT fk_conta_deposito
+	FOREIGN KEY (conta_deposito)
+	REFERENCES sch_funcionario.tb_deposito_funcionario(id_deposito)
+)
+GO
+
+
+CREATE TABLE sch_hospede.tb_hospede(
+	id_hospede INT IDENTITY NOT NULL,
+	nome VARCHAR(20) NOT NULL,
+	sobrenome VARCHAR(60) NOT NULL,
+	dt_nascimento DATE NOT NULL,
+	cpf BIGINT NOT NULL,
+	rg INT NOT NULL,
+	sexo CHAR(1) NOT NULL,
+	emial VARCHAR(50) NOT NULL,
+	id_telefone INT NOT NULL,
+	id_endereco INT NOT NULL,
+CONSTRAINT pk_id_hospede
+	PRIMARY KEY (id_hsopede)
+CONSTRAINT fk_id_tel_hosp
+	FOREIGN KEY (id_telefone)
+	REFERENCES sch_pessoa.tb_telefone_pessoa (id_telefone),
+CONSTRAINT fk_id_end_hosp
+	FOREIGN KEY (id_endereco)
+	REFERENCES sch_pessoa.tb_endereco_pessoa (id_endereco)
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
+
+CREATE TABLE sch_.tb_(
+
+)
+GO
+
