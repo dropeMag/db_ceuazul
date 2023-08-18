@@ -71,12 +71,14 @@ Apêndices:
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-- Arrumar tb_telefone e tb_endereco: id não pode ser tinyiny, deve ser int! Arrumas em suas tabelas e nas tabelas tb_funcionario e tb_hospede.
 
-- mudar o id_funcionario de TINYINT para SMALLINT.
-
-- mudar o id_hospede de tinyint para INT
 
 - Fazer um lógico para cada tabela.
 
-- Colocar o valor de VARCHAR de "país" em TB_ENDERECO
+- Concertar os nomes das CONSTRAINTS
+
+- Colocar uma segurança mais avançada no tb_deposito_funcionario
+
+- Pesquisar sobre redução de espaço de coluna (tbs telefone e endereco)
+
+- triiger para calcular o valor final antes de inativar uma reserva não cancelada
