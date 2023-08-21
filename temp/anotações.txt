@@ -72,13 +72,12 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+- Alterar o tamanho nas tbs Telefone e Endereco (´observacao´ agora é de 150)
 
 - Fazer um lógico para cada tabela.
 
-- Concertar os nomes das CONSTRAINTS
+- colocar a tabelas de schemas em ordem alfabética
 
-- Colocar uma segurança mais avançada no tb_deposito_funcionario
-
-- Pesquisar sobre redução de espaço de coluna (tbs telefone e endereco)
+- aprimorar os dados sobre cada tabela (tá muito vago)
 
 - triiger para calcular o valor final antes de inativar uma reserva não cancelada

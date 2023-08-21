@@ -1,14 +1,14 @@
-CREATE SCHEMA sch_pessoa
+CREATE SCHEMA scPessoa
 GO
 
-CREATE SCHEMA sch_funcionario
+CREATE SCHEMA scFuncionario
 GO
 
-CREATE SCHEMA sch_hospede
+CREATE SCHEMA scHospede
 GO
 
-CREATE SCHEMA sch_comodo
+CREATE SCHEMA scComodo
 GO
 
-CREATE SCHEMA sch_reserva
+CREATE SCHEMA scReserva
 GO

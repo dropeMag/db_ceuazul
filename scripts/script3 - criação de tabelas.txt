@@ -1,87 +1,107 @@
-CREATE TABLE sch_funcionario.tb_funcao_funcionario(
-	id_funcao TINYINT IDENTITY NOT NULL,
-	descricao VARCHAR(20) NOT NULL,
-CONSTRAINT pk_id_funcao
-	PRIMARY KEY (id_funcao)
-)
-GO
-
-
-CREATE TABLE sch_funcionario.tb_deposito_funcionario(
-	id_deposito SMALLINT IDENTITY NOT NULL,
-	numero_conta INT NOT NULL,
-	codigo_agencia SMALLINT NOT NULL,
-	tipo_conta TINYINT NOT NULL,
-	nome_banco VARCHAR(15) NOT NULL,
-CONSTRAINT pk_id_deposito
-	PRIMARY KEY (id_deposito)
-)
-GO
-
-
-CREATE TABLE sch_pessoa.tb_telefone_pessoa(
+CREATE TABLE [scPessoa].[Telefone_Pessoa](
 	id_telefone INT IDENTITY NOT NULL,
 	codigo_pais SMALLINT NOT NULL,
 	codigo_area SMALLINT NOT NULL,
 	telefone INT NOT NULL,
-	observacao VARCHAR(50),
-CONSTRAINT pk_id_telefone
+	observacao VARCHAR(150) NULL,
+CONSTRAINT PK_id_telefone
 	PRIMARY KEY (id_telefone)
 )
 GO
 
 
-CREATE TABLE sch_pessoa.tb_endereco_pessoa(
+CREATE TABLE [scPessoa].[Endereco_Pessoa](
 	id_endereco INT IDENTITY NOT NULL,
 	pais VARCHAR(60) NOT NULL,
 	estado VARCHAR(60) NOT NULL,
 	cidade VARCHAR(60) NOT NULL,
 	bairro VARCHAR(60) NOT NULL,
-	rua INT NOT NULL,
+	rua VARCHAR(60) NOT NULL,
 	numero INT NOT NULL,
-	complemento VARCHAR(20) NOT NULL,
+	complemento VARCHAR(20) NULL,
 	cep INT NOT NULL,
-	observacao VARCHAR(50),
-CONSTRAINT pk_id_endereco
+	observacao VARCHAR(150) NULL,
+CONSTRAINT PK_id_endereco
 	PRIMARY KEY (id_endereco)
 )
 GO
 
 
-CREATE TABLE sch_funcionario.tb_funcionario(
+CREATE TABLE [scFuncionario].[Funcao_Funcionario](
+	id_funcao TINYINT IDENTITY NOT NULL,
+	descricao VARCHAR(20) NOT NULL,
+CONSTRAINT PK_id_funcao
+	PRIMARY KEY (id_funcao)
+)
+GO
+
+
+CREATE TABLE [scFuncionario].[Deposito_Funcionario](
+	id_deposito SMALLINT IDENTITY NOT NULL,
+	numero_conta INT MASKED WITH (FUNCTION = 'default()') NOT NULL,
+	codigo_agencia SMALLINT MASKED WITH (FUNCTION = 'default()') NOT NULL,
+	tipo_conta TINYINT MASKED WITH (FUNCTION = 'default()') NOT NULL,
+	nome_banco VARCHAR(15) NOT NULL,
+CONSTRAINT PK_id_deposito
+	PRIMARY KEY (id_deposito)
+)
+GO
+
+
+CREATE TABLE [scFuncionario].[Servico](
+	id_servico TINYINT IDENTITY NOT NULL,
+	descricao VARCHAR(20) NOT NULL,
+CONSTRAINT PK_id_servico
+	PRIMARY KEY (id_servico)
+)
+GO
+
+
+CREATE TABLE [scFuncionario].[Funcionario](
 	id_funcionario SMALLINT IDENTITY NOT NULL,
 	nome VARCHAR(20) NOT NULL,
 	sobrenome VARCHAR(60) NOT NULL,
 	dt_nascimento DATE NOT NULL,
 	cpf BIGINT MASKED WITH (FUNCTION = 'default()') NOT NULL,
 	rg INT MASKED WITH (FUNCTION = 'default()') NOT NULL,
-	sexo CHAR(1) CHECK(LOWER(sexo) IN ('m', 'f')) NOT NULL,
+	sexo CHAR(1) NOT NULL,
 	email VARCHAR(50) MASKED WITH (FUNCTION = 'email()') NOT NULL,
 	id_telefone INT MASKED WITH (FUNCTION = 'default()') NOT NULL,
 	id_endereco INT MASKED WITH (FUNCTION = 'default()') NOT NULL,
 	tipo_funcao TINYINT NOT NULL,
 	conta_deposito SMALLINT MASKED WITH (FUNCTION = 'default()') NOT NULL,
-CONSTRAINT pk_id_funcionario
+CONSTRAINT PK_id_funcionario
 	PRIMARY KEY (id_funcionario),
-CONSTRAINT uk_cpf_func
+CONSTRAINT UK_cpf_func
 	UNIQUE (cpf),
-CONSTRAINT fk_id_tel_func
+CONSTRAINT CK_sexo_func
+	CHECK (LOWER(sexo) IN ('m', 'f')),
+CONSTRAINT FK_id_tel_func
 	FOREIGN KEY (id_telefone)
-	REFERENCES sch_pessoa.tb_telefone_pessoa(id_telefone),
-CONSTRAINT fk_id_end_func
+	REFERENCES [scPessoa].[Telefone_Pessoa](id_telefone),
+CONSTRAINT FK_id_end_func
 	FOREIGN KEY (id_endereco)
-	REFERENCES sch_pessoa.tb_endereco_pessoa(id_endereco),
-CONSTRAINT fk_tipo_funcao
+	REFERENCES [scPessoa].[Endereco_Pessoa](id_endereco),
+CONSTRAINT FK_tipo_funcao
 	FOREIGN KEY (tipo_funcao)
-	REFERENCES sch_funcionario.tb_funcao_funcionario(id_funcao),
-CONSTRAINT fk_conta_deposito
+	REFERENCES [scFuncionario].[Funcao_Funcionario](id_funcao),
+CONSTRAINT FK_conta_deposito
 	FOREIGN KEY (conta_deposito)
-	REFERENCES sch_funcionario.tb_deposito_funcionario(id_deposito)
+	REFERENCES [scFuncionario].[Deposito_Funcionario](id_deposito)
 )
 GO
 
 
-CREATE TABLE sch_hospede.tb_hospede(
+CREATE TABLE [scHospede].[Tipo_Hospede](
+	id_tp_hospede TINYINT IDENTITY NOT NULL,
+	descricao VARCHAR(20) NOT NULL,
+CONSTRAINT PK_id_tp_hospede
+	PRIMARY KEY (id_tp_hospede)
+)
+GO
+
+
+CREATE TABLE [scHospede].[Hospede](
 	id_hospede INT IDENTITY NOT NULL,
 	nome VARCHAR(20) NOT NULL,
 	sobrenome VARCHAR(60) NOT NULL,
@@ -92,107 +112,76 @@ CREATE TABLE sch_hospede.tb_hospede(
 	email VARCHAR(50) MASKED WITH (FUNCTION = 'email()') NOT NULL,
 	id_telefone INT MASKED WITH (FUNCTION = 'default()') NOT NULL,
 	id_endereco INT MASKED WITH (FUNCTION = 'default()') NOT NULL,
-CONSTRAINT pk_id_hospede
+CONSTRAINT PK_id_hospede
 	PRIMARY KEY (id_hospede),
-CONSTRAINT uk_cpf_hosp
+CONSTRAINT UK_cpf_hosp
 	UNIQUE (cpf),
-CONSTRAINT fk_id_tel_hosp
+CONSTRAINT CK_sexo_hosp
+	CHECK (LOWER(sexo) IN ('m', 'f')),
+CONSTRAINT FK_id_tel_hosp
 	FOREIGN KEY (id_telefone)
-	REFERENCES sch_pessoa.tb_telefone_pessoa (id_telefone),
-CONSTRAINT fk_id_end_hosp
+	REFERENCES [scPessoa].[Telefone_Pessoa] (id_telefone),
+CONSTRAINT FK_id_end_hosp
 	FOREIGN KEY (id_endereco)
-	REFERENCES sch_pessoa.tb_endereco_pessoa (id_endereco)
+	REFERENCES [scPessoa].[Endereco_Pessoa] (id_endereco)
 )
 GO
 
 
-CREATE TABLE sch_hospede.tb_tp_hospede(
-	id_tp_hospede TINYINT IDENTITY NOT NULL,
-	descricao VARCHAR(20) NOT NULL,
-CONSTRAINT pk_id_tp_hospede
-	PRIMARY KEY (id_tp_hospede)
-)
-GO
-
-
-CREATE TABLE sch_hospede.tb_hospede_classe(
-	id_tp_hospede TINYINT NOT NULL,
-	id_hospede INT NOT NULL,
-CONSTRAINT pk_hospede_tipos
-	PRIMARY KEY (id_tp_hospede, id_hospede),
-CONSTRAINT fk_id_tp_hospede
-	FOREIGN KEY (id_tp_hospede)
-	REFERENCES sch_hospede.tb_tp_hospede (id_tp_hospede),
-CONSTRAINT fk_id_hospede_categ
-	FOREIGN KEY (id_hospede)
-	REFERENCES sch_hospede.tb_hospede (id_hospede)
-)
-GO
-
-
-CREATE TABLE sch_funcionario.tb_servico(
-	id_servico TINYINT IDENTITY NOT NULL,
-	descricao VARCHAR(20) NOT NULL,
-CONSTRAINT pk_id_servico
-	PRIMARY KEY (id_servico)
-)
-GO
-
-
-CREATE TABLE sch_comodo.tb_tp_quarto(
+CREATE TABLE [scComodo].[Tipo_Quarto](
 	id_tp_quarto TINYINT IDENTITY NOT NULL,
 	descicao VARCHAR(20) NOT NULL,
-CONSTRAINT pk_id_tp_quarto
+CONSTRAINT PK_id_tp_quarto
 	PRIMARY KEY (id_tp_quarto)
 )
 GO
 
 
-CREATE TABLE sch_comodo.tb_quarto(
+CREATE TABLE [scComodo].[Quarto](
 	id_quarto TINYINT IDENTITY NOT NULL,
 	num_andar TINYINT NOT NULL,
 	num_camas TINYINT NOT NULL,
 	valor_diaria DECIMAL(5, 2) NOT NULL,
 	tipo_quarto TINYINT NULL,
 	status BIT NOT NULL,
-CONSTRAINT pk_id_quarto
+CONSTRAINT PK_id_quarto
 	PRIMARY KEY (id_quarto),
-CONSTRAINT fk_tipo_quarto
+CONSTRAINT FK_tipo_quarto
 	FOREIGN KEY (tipo_quarto)
-	REFERENCES sch_comodo.tb_tp_quarto(id_tp_quarto)
+	REFERENCES [scComodo].[Tipo_Quarto](id_tp_quarto)
 	ON DELETE SET NULL
 )
 GO
 
 
-CREATE TABLE sch_reserva.tb_tp_pagamento(
+CREATE TABLE [scReserva].[Tipo_Pagamento](
 	id_tp_pagamento TINYINT IDENTITY NOT NULL,
 	descricao VARCHAR(20) NOT NULL,
-CONSTRAINT pk_id_tp_pagamento
+CONSTRAINT PK_id_tp_pagamento
 	PRIMARY KEY (id_tp_pagamento)
 )
 GO
 
 
-CREATE TABLE sch_reserva.tb_tp_cancelamento(
+CREATE TABLE [scReserva].[Tipo_Cancelamento](
 	id_tp_cancelamento TINYINT IDENTITY NOT NULL,
 	descricao VARCHAR(20) NOT NULL,
-CONSTRAINT pk_id_tp_cancelamento
+CONSTRAINT PK_id_tp_cancelamento
 	PRIMARY KEY (id_tp_cancelamento)
 )
 GO
 
 
-CREATE TABLE sch_reserva.tb_tp_contato(
+CREATE TABLE [scReserva].[Tipo_Contato](
 	id_tp_contato TINYINT IDENTITY NOT NULL,
 	descricao VARCHAR(20) NOT NULL,
-CONSTRAINT pk_id_tp_contato
+CONSTRAINT PK_id_tp_contato
 	PRIMARY KEY (id_tp_contato)
 )
 GO
 
 
-CREATE TABLE sch_reserva.tb_reserva(
+CREATE TABLE [scReserva].[Reserva](
 	id_reserva INT IDENTITY NOT NULL,
 	data_checkin DATETIME NOT NULL,
 	data_checkou DATETIME NULL,
@@ -206,50 +195,79 @@ CREATE TABLE sch_reserva.tb_reserva(
 	valor_total DECIMAL(7, 2) NULL,
 	status BIT NOT NULL,
 	cancelamento TINYINT NULL,
-CONSTRAINT pk_id_reserva
+CONSTRAINT PK_id_reserva
 	PRIMARY KEY (id_reserva),
-CONSTRAINT fk_funcion_checkin
+CONSTRAINT FK_funcion_checkin
 	FOREIGN KEY (funcion_checkin)
-	REFERENCES sch_funcionario.tb_funcionario (id_funcionario),
-CONSTRAINT fk_funcion_checkout
+	REFERENCES [scFuncionario].[Funcionario] (id_funcionario),
+CONSTRAINT FK_funcion_checkout
 	FOREIGN KEY (funcion_checkout)
-	REFERENCES sch_funcionario.tb_funcionario (id_funcionario),
-CONSTRAINT fk_hospede_principal
+	REFERENCES [scFuncionario].[Funcionario] (id_funcionario),
+CONSTRAINT FK_hospede_principal
 	FOREIGN KEY (hospede_principal)
-	REFERENCES sch_hospede.tb_hospede (id_hospede),
-CONSTRAINT fk_id_quarto
+	REFERENCES [scHospede].[Hospede] (id_hospede),
+CONSTRAINT FK_id_quarto
 	FOREIGN KEY (id_quarto)
-	REFERENCES sch_comodo.tb_quarto (id_quarto),
-CONSTRAINT fk_tp_pagamento
+	REFERENCES [scComodo].[Quarto] (id_quarto),
+CONSTRAINT FK_tp_pagamento
 	FOREIGN KEY (tipo_pagamento)
-	REFERENCES sch_reserva.tb_tp_pagamento (id_tp_pagamento),
-CONSTRAINT fk_tp_contato
+	REFERENCES [scReserva].[Tipo_Pagamento] (id_tp_pagamento),
+CONSTRAINT FK_tp_contato
 	FOREIGN KEY (tipo_contato)
-	REFERENCES sch_reserva.tb_tp_contato (id_tp_contato),
-CONSTRAINT fk_tp_cancelamento
+	REFERENCES [scReserva].[Tipo_Contato] (id_tp_contato),
+CONSTRAINT FK_tp_cancelamento
 	FOREIGN KEY (cancelamento)
-	REFERENCES sch_reserva.tb_tp_cancelamento (id_tp_cancelamento)
+	REFERENCES [scReserva].[Tipo_Cancelamento] (id_tp_cancelamento)
 )
 GO
 
 
+CREATE TABLE [scHospede].[Hospede_Classe](
+	id_tp_hospede TINYINT NOT NULL,
+	id_hospede INT NOT NULL,
+CONSTRAINT PK_hospede_tipos
+	PRIMARY KEY (id_tp_hospede, id_hospede),
+CONSTRAINT FK_tp_hospede
+	FOREIGN KEY (id_tp_hospede)
+	REFERENCES [scHospede].[Tipo_Hospede] (id_tp_hospede),
+CONSTRAINT FK_hospede_1
+	FOREIGN KEY (id_hospede)
+	REFERENCES [scHospede].[Hospede] (id_hospede)
+)
+GO
 
-CREATE TABLE sch_hospede.tb_estadia(
+
+CREATE TABLE [scReserva].[Reserva_Servico](
+	id_reserva INT NOT NULL,
+	id_servico TINYINT NOT NULL,
+CONSTRAINT PK_reserva_servico
+	PRIMARY KEY (id_reserva, id_servico),
+CONSTRAINT FK_id_reserva_1
+	FOREIGN KEY (id_reserva)
+	REFERENCES [scReserva].[Reserva] (id_reserva),
+CONSTRAINT FK_id_servico
+	FOREIGN KEY (id_servico)
+	REFERENCES [scFuncionario].[Servico] (id_servico)
+)
+GO
+
+
+CREATE TABLE [scHospede].[Estadia](
 	id_hospede INT NOT NULL,
 	id_reserva INT NOT NULL,
-CONSTRAINT pk_hospede_reserva
+CONSTRAINT PK_hospede_reserva
 	PRIMARY KEY (id_hospede, id_reserva),
-CONSTRAINT fk_id_hospede_res
+CONSTRAINT FK_id_hospede_2
 	FOREIGN KEY (id_hospede)
-	REFERENCES sch_hospede.tb_hospede (id_hospede),
-CONSTRAINT fk_id_reserva_hosp
+	REFERENCES [scHospede].[Hospede] (id_hospede),
+CONSTRAINT FK_id_reserva_2
 	FOREIGN KEY (id_reserva)
-	REFERENCES sch_reserva.tb_reserva (id_reserva)
+	REFERENCES [scReserva].[Reserva] (id_reserva)
 )
 GO
 
 
-CREATE TABLE sch_comodo.tb_avaliacao(
+CREATE TABLE [scComodo].[Avaliacao](
 	tipo_contato TINYINT NOT NULL,
 	id_reserva INT NOT NULL,
 	comodidade TINYINT NULL,
@@ -257,28 +275,13 @@ CREATE TABLE sch_comodo.tb_avaliacao(
 	custo_beneficio TINYINT NULL,
 	localizacao TINYINT NULL,
 	limpeza TINYINT NULL,
-CONSTRAINT pk_reserva_avaliacao
+CONSTRAINT PK_reserva_avaliacao
 	PRIMARY KEY (tipo_contato, id_reserva),
-CONSTRAINT fk_tp_contato
+CONSTRAINT FK_tp_contato
 	FOREIGN KEY (tipo_contato)
-	REFERENCES sch_reserva.tb_tp_contato (id_tp_contato),
-CONSTRAINT fk_id_reserva_av
+	REFERENCES [scReserva].[Tipo_Contato] (id_tp_contato),
+CONSTRAINT FK_id_reserva_av
 	FOREIGN KEY (id_reserva)
-	REFERENCES sch_reserva.tb_reserva (id_reserva)
-)
-GO
-
-
-CREATE TABLE sch_reserva.tb_reserva_servico(
-	id_reserva INT NOT NULL,
-	id_servico TINYINT NOT NULL,
-CONSTRAINT pk_reserva_servico
-	PRIMARY KEY (id_reserva, id_servico),
-CONSTRAINT fk_id_reserva_serv
-	FOREIGN KEY (id_reserva)
-	REFERENCES sch_reserva.tb_reserva (id_reserva),
-CONSTRAINT fk_id_servico
-	FOREIGN KEY (id_servico)
-	REFERENCES sch_funcionario.tb_servico (id_servico)
+	REFERENCES [scReserva].[Reserva] (id_reserva)
 )
 GO
