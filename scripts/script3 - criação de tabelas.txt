@@ -51,6 +51,7 @@ GO
 CREATE TABLE [scFuncionario].[Servico](
 	id_servico TINYINT IDENTITY NOT NULL,
 	descricao VARCHAR(20) NOT NULL,
+	valor FLOAT NOT NULL,
 CONSTRAINT PK_id_servico
 	PRIMARY KEY (id_servico)
 )
@@ -240,6 +241,7 @@ GO
 CREATE TABLE [scReserva].[Reserva_Servico](
 	id_reserva INT NOT NULL,
 	id_servico TINYINT NOT NULL,
+	num_solicitacao TINYINT NOT NULL,
 CONSTRAINT PK_reserva_servico
 	PRIMARY KEY (id_reserva, id_servico),
 CONSTRAINT FK_id_reserva_1
@@ -282,6 +284,17 @@ CONSTRAINT FK_tp_contato
 	REFERENCES [scReserva].[Tipo_Contato] (id_tp_contato),
 CONSTRAINT FK_id_reserva_av
 	FOREIGN KEY (id_reserva)
-	REFERENCES [scReserva].[Reserva] (id_reserva)
+	REFERENCES [scReserva].[Reserva] (id_reserva),
+CONSTRAINT CK_comodidade
+	CHECK ((0 <= comodidade) AND (comodidade <= 10)),
+CONSTRAINT CK_conforto
+	CHECK ((0 <= conforto) AND (conforto <= 10)),
+CONSTRAINT CK_custo_beneficio
+	CHECK ((0 <= custo_beneficio) AND (custo_beneficio <= 10)),
+CONSTRAINT CK_localizacao
+	CHECK ((0 <= localizacao) AND (localizacao <= 10)),
+CONSTRAINT CK_limpeza
+	CHECK ((0 <= limpeza) AND (limpeza <= 10))
 )
 GO
+

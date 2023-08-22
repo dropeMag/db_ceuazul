@@ -72,12 +72,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-- Alterar o tamanho nas tbs Telefone e Endereco (´observacao´ agora é de 150)
+- Atualizar os modelos
 
 - Fazer um lógico para cada tabela.
-
-- colocar a tabelas de schemas em ordem alfabética
-
-- aprimorar os dados sobre cada tabela (tá muito vago)
 
 - triiger para calcular o valor final antes de inativar uma reserva não cancelada
