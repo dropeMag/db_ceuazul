@@ -72,8 +72,40 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-- Atualizar os modelos
-
-- Fazer um lógico para cada tabela.
+- inserir dados
 
 - triiger para calcular o valor final antes de inativar uma reserva não cancelada
+
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+Inserir Dados Iniciais: Comece inserindo alguns dados de exemplo nas tabelas para testar e verificar se as estruturas estão funcionando conforme o esperado.
+
+Criar Índices e Restrições: Avalie quais índices são necessários para melhorar o desempenho das consultas e criar restrições (como chaves únicas) para garantir a integridade dos dados.
+
+Criar Procedimentos Armazenados: Crie procedimentos armazenados para executar operações complexas ou frequentes no banco de dados.
+
+Criar Funções e Triggers: Considere criar funções para processamento de dados e triggers para automatizar ações quando certos eventos ocorrem.
+
+Criar Visões: Se necessário, crie visões para simplificar consultas complexas ou fornecer uma camada de abstração para os usuários.
+
+Realizar Testes e Otimização: Execute testes de desempenho e otimize consultas para garantir que o banco de dados funcione de maneira eficiente.
+
+Documentação Completa: Complete a documentação do seu projeto, incluindo descrições detalhadas das tabelas, relacionamentos, procedimentos, funções, visões, etc.
+
+Implementar Segurança: Defina permissões de usuário para garantir que apenas as pessoas autorizadas tenham acesso e as ações apropriadas no banco de dados.
+
+Backup e Monitoramento: Implemente rotinas regulares de backup do banco de dados e estabeleça processos de monitoramento para garantir a saúde do sistema.
+
+
+
+
+
+
+
+
+
+

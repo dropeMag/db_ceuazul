@@ -207,6 +207,8 @@ CONSTRAINT FK_funcion_checkout
 CONSTRAINT FK_hospede_principal
 	FOREIGN KEY (hospede_principal)
 	REFERENCES [scHospede].[Hospede] (id_hospede),
+CONSTRAINT CK_num_hospede
+	CHECK (num_hospede >= 1),
 CONSTRAINT FK_id_quarto
 	FOREIGN KEY (id_quarto)
 	REFERENCES [scComodo].[Quarto] (id_quarto),
@@ -297,4 +299,3 @@ CONSTRAINT CK_limpeza
 	CHECK ((0 <= limpeza) AND (limpeza <= 10))
 )
 GO
-
