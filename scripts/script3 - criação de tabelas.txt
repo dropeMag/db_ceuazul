@@ -274,11 +274,11 @@ GO
 CREATE TABLE [scComodo].[Avaliacao](
 	tipo_contato TINYINT NOT NULL,
 	id_reserva INT NOT NULL,
-	comodidade TINYINT NULL,
-	conforto TINYINT NULL,
-	custo_beneficio TINYINT NULL,
-	localizacao TINYINT NULL,
-	limpeza TINYINT NULL,
+	comodidade FLOAT NULL,
+	conforto FLOAT NULL,
+	custo_beneficio FLOAT NULL,
+	localizacao FLOAT NULL,
+	limpeza FLOAT NULL,
 CONSTRAINT PK_reserva_avaliacao
 	PRIMARY KEY (tipo_contato, id_reserva),
 CONSTRAINT FK_tp_contato
