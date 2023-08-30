@@ -74,7 +74,21 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 - inserir dados
 
+- Tornar as FK em Uniques e adicionar ON DELETE/MODIFY caso necessário
+
+- Impedir o aluguel do mesmo quarto ao mesmo tempo
+
+- A data de checkout não pode ser menor do que a data de checkin
+
+- verificar o num_hospede com a associativa
+
+- verificar se o funcionário é autorizado para fazer checkin/checkout
+
 - triiger para calcular o valor final antes de inativar uma reserva não cancelada
+
+- Criar a database Bar
+
+- Criar a database Finanças
 
 
 

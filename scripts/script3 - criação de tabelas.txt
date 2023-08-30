@@ -131,7 +131,7 @@ GO
 
 CREATE TABLE [scComodo].[Tipo_Quarto](
 	id_tp_quarto TINYINT IDENTITY NOT NULL,
-	descicao VARCHAR(20) NOT NULL,
+	descricao VARCHAR(20) NOT NULL,
 CONSTRAINT PK_id_tp_quarto
 	PRIMARY KEY (id_tp_quarto)
 )
@@ -157,7 +157,7 @@ GO
 
 CREATE TABLE [scReserva].[Tipo_Pagamento](
 	id_tp_pagamento TINYINT IDENTITY NOT NULL,
-	descricao VARCHAR(20) NOT NULL,
+	descricao VARCHAR(10) NOT NULL,
 CONSTRAINT PK_id_tp_pagamento
 	PRIMARY KEY (id_tp_pagamento)
 )
@@ -166,7 +166,7 @@ GO
 
 CREATE TABLE [scReserva].[Tipo_Cancelamento](
 	id_tp_cancelamento TINYINT IDENTITY NOT NULL,
-	descricao VARCHAR(20) NOT NULL,
+	descricao VARCHAR(25) NOT NULL,
 CONSTRAINT PK_id_tp_cancelamento
 	PRIMARY KEY (id_tp_cancelamento)
 )
@@ -185,7 +185,7 @@ GO
 CREATE TABLE [scReserva].[Reserva](
 	id_reserva INT IDENTITY NOT NULL,
 	data_checkin DATETIME NOT NULL,
-	data_checkou DATETIME NULL,
+	data_checkout DATETIME NULL,
 	funcion_checkin SMALLINT NOT NULL,
 	funcion_checkout SMALLINT NULL,
 	hospede_principal INT NOT NULL,
@@ -274,9 +274,9 @@ GO
 CREATE TABLE [scComodo].[Avaliacao](
 	tipo_contato TINYINT NOT NULL,
 	id_reserva INT NOT NULL,
-	comodidade FLOAT NULL,
 	conforto FLOAT NULL,
 	custo_beneficio FLOAT NULL,
+	funcionarios FLOAT NULL,
 	localizacao FLOAT NULL,
 	limpeza FLOAT NULL,
 CONSTRAINT PK_reserva_avaliacao
@@ -287,12 +287,12 @@ CONSTRAINT FK_tp_contato
 CONSTRAINT FK_id_reserva_av
 	FOREIGN KEY (id_reserva)
 	REFERENCES [scReserva].[Reserva] (id_reserva),
-CONSTRAINT CK_comodidade
-	CHECK ((0 <= comodidade) AND (comodidade <= 10)),
 CONSTRAINT CK_conforto
 	CHECK ((0 <= conforto) AND (conforto <= 10)),
 CONSTRAINT CK_custo_beneficio
 	CHECK ((0 <= custo_beneficio) AND (custo_beneficio <= 10)),
+CONSTRAINT CK_funcionarios
+	CHECK ((0 <= funcionarios) AND (funcionarios <= 10)),
 CONSTRAINT CK_localizacao
 	CHECK ((0 <= localizacao) AND (localizacao <= 10)),
 CONSTRAINT CK_limpeza
