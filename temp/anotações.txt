@@ -72,17 +72,23 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-- inserir dados
+- transformar os FLOATs financeiros em DECIMAL
+
+- anotar no documento que a pousada tem 30 quartos e 5 andares (6 quartos em cada andar); no térreo está a recepção, bar, office room e academia; falar que cada quarto é numerado de 101 a 130
+
+- transformar num_andar (tabela quarto) em check, aceitando apenas valores de 1 a 5
+
+- transformar valor_diaria (tabela quarto) em check, aceitando um valor mínimo de 80(?)
 
 - Tornar as FK em Uniques e adicionar ON DELETE/MODIFY caso necessário
 
-- Impedir o aluguel do mesmo quarto ao mesmo tempo
+- Impedir o aluguel do mesmo quarto ao mesmo tempo (trigger)
 
-- A data de checkout não pode ser menor do que a data de checkin
+- A data de checkout não pode ser menor do que a data de checkin (trigger e/ou check)
 
-- verificar o num_hospede com a associativa
+- verificar o num_hospede(tabela reserva) com a associativa(tabela estadia) (usar uma sp para o cadastro dos hóspedes. Primeiro realizar o cadastro normal, somente com o principal, em seguida fazer o cadastro dos outros...?)
 
-- verificar se o funcionário é autorizado para fazer checkin/checkout
+- verificar se o funcionário é autorizado para fazer checkin/checkout(trigger)
 
 - triiger para calcular o valor final antes de inativar uma reserva não cancelada
 
@@ -95,8 +101,6 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-Inserir Dados Iniciais: Comece inserindo alguns dados de exemplo nas tabelas para testar e verificar se as estruturas estão funcionando conforme o esperado.
 
 Criar Índices e Restrições: Avalie quais índices são necessários para melhorar o desempenho das consultas e criar restrições (como chaves únicas) para garantir a integridade dos dados.
 
