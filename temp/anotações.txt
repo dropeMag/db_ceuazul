@@ -72,6 +72,10 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+- criar associativa Reserva_Bar
+
+- informar se o funcionário ainda está ativo e colocar a data de admissão e demissão
+
 - tirar print e pegar resultados das operações após implementação de melhoria
 
 - transformar os FLOATs financeiros em DECIMAL
@@ -94,9 +98,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 - triiger para calcular o valor final antes de inativar uma reserva não cancelada
 
-- Criar a database Bar
-
-- Criar a database Finanças
+- Criar a database Finanças (Tabelas: salarios, entradas, saídas)
 
 
 
