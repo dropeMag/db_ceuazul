@@ -7,7 +7,7 @@ GO
 CREATE SCHEMA scHospede
 GO
 
-CREATE SCHEMA scComodo
+CREATE SCHEMA scEstalagem
 GO
 
 CREATE SCHEMA scReserva

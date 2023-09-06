@@ -72,13 +72,15 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-- criar associativa Reserva_Bar
+- separar imagens do banco de dados(png) por schemas e colocar no documento
 
-- informar se o funcionário ainda está ativo e colocar a data de admissão e demissão
+*- criar associativa Reserva_Bar
+
+*- informar se o funcionário ainda está ativo e colocar a data de admissão e demissão
 
 - tirar print e pegar resultados das operações após implementação de melhoria
 
-- transformar os FLOATs financeiros em DECIMAL
+*- transformar os FLOATs financeiros em DECIMAL
 
 - anotar no documento que a pousada tem 30 quartos e 5 andares (6 quartos em cada andar); no térreo está a recepção, bar, office room e academia; falar que cada quarto é numerado de 101 a 130
 
@@ -94,25 +96,49 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 - verificar o num_hospede(tabela reserva) com a associativa(tabela estadia) (usar uma sp para o cadastro dos hóspedes. Primeiro realizar o cadastro normal, somente com o principal, em seguida fazer o cadastro dos outros...?)
 
+- cerificar se hospede_principal possui os requisitos necessários (não pode ser dependente, tem que ter enedreço, numero, email)
+
 - verificar se o funcionário é autorizado para fazer checkin/checkout(trigger)
 
-- triiger para calcular o valor final antes de inativar uma reserva não cancelada
+- trigger para calcular o valor final antes de inativar uma reserva não cancelada
 
-- Criar a database Finanças (Tabelas: salarios, entradas, saídas)
+- trigger para ter certeza que o hóspede principal não está recebendo o email, telefone ou endereço de outro hóspede principal
 
+- trigger para impedir o uso de qualquer estadia encerrada
+
+- trigger para, caso haja alguma solicitação no bar, um taxa extra seja cobrada???
+
+- trigger para analisar se existem números ou endereços duplicados (ou procedure de insert)
+
+- Criar a database Finanças (Tabelas: salarios, entradas, saídas, benefícios, ponto?)
+
+- criar procedure que faça com que todos os dependentes de algum hóspede receba os dados desse hóspede
+
+- criar um sistema que ofereça um desconto (15% no valor final?) para os funcionários que se hospedarem no hotel
+
+- arrumar modelo conceitual
+
+
+tabelas:
+- ponto
+- promoções da empresa
+- conta de acesso (tabela que contem as os códigos e as senhas para cada funcionário (atendentes, supervisores e gerentes) para realizarem checkins/checkouts de hospedes)
+
+inserts:
+- novas posições (ex: supervisor limpeza)
 
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-Criar Índices e Restrições: Avalie quais índices são necessários para melhorar o desempenho das consultas e criar restrições (como chaves únicas) para garantir a integridade dos dados.
+_Criar Índices e Restrições: Avalie quais índices são necessários para melhorar o desempenho das consultas e criar restrições (como chaves únicas) para garantir a integridade dos dados.
 
 Criar Procedimentos Armazenados: Crie procedimentos armazenados para executar operações complexas ou frequentes no banco de dados.
 
 Criar Funções e Triggers: Considere criar funções para processamento de dados e triggers para automatizar ações quando certos eventos ocorrem.
 
-Criar Visões: Se necessário, crie visões para simplificar consultas complexas ou fornecer uma camada de abstração para os usuários.
+Criar Views: Se necessário, crie visões para simplificar consultas complexas ou fornecer uma camada de abstração para os usuários.
 
 Realizar Testes e Otimização: Execute testes de desempenho e otimize consultas para garantir que o banco de dados funcione de maneira eficiente.
 
