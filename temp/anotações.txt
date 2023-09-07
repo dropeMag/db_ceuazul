@@ -43,7 +43,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 Segurança e Privacidade:
 - Medidas de segurança implementadas para proteger os dados dos hóspedes.
 - Máscara de Dados Dinâmicos.
-- Fazer testes de controle tanto com trigger quanto com procedure (anote os resultados e documente).
+- Fazer testes de controle tanto com trigger quanto com procedure (anote os resultados e documente - nesse caso, decidir se em algumas situações é mais prático usar trigger ou sp para realizar uma ação).
 - Políticas de privacidade e conformidade com regulamentos.
 
 
@@ -72,21 +72,17 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+- colocar UNIQUE nas tabelas descritivas
+
+- retirar pagamento único de academia e office room e não cobrar taxa para uso do bar
+
 - separar imagens do banco de dados(png) por schemas e colocar no documento
-
-*- criar associativa Reserva_Bar
-
-*- informar se o funcionário ainda está ativo e colocar a data de admissão e demissão
 
 - tirar print e pegar resultados das operações após implementação de melhoria
 
-*- transformar os FLOATs financeiros em DECIMAL
+- anotar no documento uma descrição melhor do que cada quarto é
 
 - anotar no documento que a pousada tem 30 quartos e 5 andares (6 quartos em cada andar); no térreo está a recepção, bar, office room e academia; falar que cada quarto é numerado de 101 a 130
-
-- transformar num_andar (tabela quarto) em check, aceitando apenas valores de 1 a 5
-
-- transformar valor_diaria (tabela quarto) em check, aceitando um valor mínimo de 80(?)
 
 - Tornar as FK em Uniques e adicionar ON DELETE/MODIFY caso necessário
 
@@ -96,25 +92,21 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 - verificar o num_hospede(tabela reserva) com a associativa(tabela estadia) (usar uma sp para o cadastro dos hóspedes. Primeiro realizar o cadastro normal, somente com o principal, em seguida fazer o cadastro dos outros...?)
 
-- cerificar se hospede_principal possui os requisitos necessários (não pode ser dependente, tem que ter enedreço, numero, email)
+- trigger para certificar se hospede_principal possui os requisitos necessários (não pode ser dependente, tem que ter endereço, telefone, email, cpf, rg)
 
 - verificar se o funcionário é autorizado para fazer checkin/checkout(trigger)
 
 - trigger para calcular o valor final antes de inativar uma reserva não cancelada
 
-- trigger para ter certeza que o hóspede principal não está recebendo o email, telefone ou endereço de outro hóspede principal
+- trigger para ter certeza que o hóspede principal não está recebendo o email, telefone ou endereço de outro hóspede principal (hóspede não dependente)
 
 - trigger para impedir o uso de qualquer estadia encerrada
-
-- trigger para, caso haja alguma solicitação no bar, um taxa extra seja cobrada???
 
 - trigger para analisar se existem números ou endereços duplicados (ou procedure de insert)
 
 - Criar a database Finanças (Tabelas: salarios, entradas, saídas, benefícios, ponto?)
 
-- criar procedure que faça com que todos os dependentes de algum hóspede receba os dados desse hóspede
-
-- criar um sistema que ofereça um desconto (15% no valor final?) para os funcionários que se hospedarem no hotel
+- criar um sistema que ofereça um desconto (15% no valor final?) para os funcionários que se hospedarem no hotel (sp que verifica se o cpf do funcionário está na lista de funcionários e está ativo)
 
 - arrumar modelo conceitual
 
