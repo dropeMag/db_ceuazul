@@ -72,7 +72,11 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-- colocar UNIQUE nas tabelas descritivas
+- TORNAR OS DEPÓSITOS COMO UNIQUES
+
+- trigger para impedir que existam id_conta(funcionários) iguais, desde que não seja NULL
+
+- criar uma tabela de despesas adicionais (Reserva_Despesa | id_reserva, despesa (VARCHAR 30), valor (DECIMAL 5, 2))
 
 - retirar pagamento único de academia e office room e não cobrar taxa para uso do bar
 
@@ -80,7 +84,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 - tirar print e pegar resultados das operações após implementação de melhoria
 
-- anotar no documento uma descrição melhor do que cada quarto é
+- anotar no documento uma descrição melhor do que cada quarto é (falar mais detalhes das categorias, oq cada quarto oferece)
 
 - anotar no documento que a pousada tem 30 quartos e 5 andares (6 quartos em cada andar); no térreo está a recepção, bar, office room e academia; falar que cada quarto é numerado de 101 a 130
 
@@ -104,7 +108,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 - trigger para analisar se existem números ou endereços duplicados (ou procedure de insert)
 
-- Criar a database Finanças (Tabelas: salarios, entradas, saídas, benefícios, ponto?)
+- Criar a database Controle (Tabelas: salarios, entradas, saídas, benefícios, ponto?, deposito) - colocar aqui os funcionários do financeiro e estoque
 
 - criar um sistema que ofereça um desconto (15% no valor final?) para os funcionários que se hospedarem no hotel (sp que verifica se o cpf do funcionário está na lista de funcionários e está ativo)
 
@@ -114,10 +118,6 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 tabelas:
 - ponto
 - promoções da empresa
-- conta de acesso (tabela que contem as os códigos e as senhas para cada funcionário (atendentes, supervisores e gerentes) para realizarem checkins/checkouts de hospedes)
-
-inserts:
-- novas posições (ex: supervisor limpeza)
 
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

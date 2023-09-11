@@ -59,6 +59,18 @@ CONSTRAINT pk_id_deposito
 GO
 
 
+CREATE TABLE [scFuncionario].[Conta_Funcionario](
+	id_conta SMALLINT IDENTITY NOT NULL,
+	usuario VARCHAR(25) MASKED WITH (FUNCTION = 'default()') CONSTRAINT uq_usuario UNIQUE NOT NULL,
+	senha VARCHAR(18) MASKED WITH (FUNCTION = 'default()') NOT NULL,
+CONSTRAINT pk_id_conta
+	PRIMARY KEY (id_conta),
+CONSTRAINT ck_senha
+	CHECK (LEN(senha) >= 8)
+)
+GO
+
+
 CREATE TABLE [scFuncionario].[Funcionario](
 	id_funcionario SMALLINT IDENTITY NOT NULL,
 	nome VARCHAR(20) NOT NULL,
@@ -73,6 +85,7 @@ CREATE TABLE [scFuncionario].[Funcionario](
 	id_endereco INT MASKED WITH (FUNCTION = 'default()') NOT NULL,
 	id_funcao TINYINT NOT NULL,
 	id_deposito SMALLINT MASKED WITH (FUNCTION = 'default()') CONSTRAINT uq_deposito UNIQUE NOT NULL,
+	id_conta SMALLINT MASKED WITH (FUNCTION = 'default()') NULL,
 	status BIT DEFAULT(1) NOT NULL,
 	observacao VARCHAR(255) NULL
 CONSTRAINT pk_id_funcionario
@@ -96,7 +109,10 @@ CONSTRAINT fk_id_funcao
 	REFERENCES [scFuncionario].[Funcao_Funcionario](id_funcao),
 CONSTRAINT fk_id_deposito
 	FOREIGN KEY (id_deposito)
-	REFERENCES [scFuncionario].[Deposito_Funcionario](id_deposito)
+	REFERENCES [scFuncionario].[Deposito_Funcionario](id_deposito),
+CONSTRAINT fk_id_conta
+	FOREIGN KEY (id_conta)
+	REFERENCES [scFuncionario].[Conta_Funcionario](id_conta)
 )
 GO
 
@@ -149,6 +165,7 @@ CREATE TABLE [scHospede].[Hospede](
 	id_telefone INT MASKED WITH (FUNCTION = 'default()') NULL,
 	id_endereco INT MASKED WITH (FUNCTION = 'default()') NULL,	
 	responsavel INT NULL,
+	hospede_retido bit NULL,
 	observacao VARCHAR(255) NULL,
 CONSTRAINT pk_id_hospede
 	PRIMARY KEY (id_hospede),

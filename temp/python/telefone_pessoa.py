@@ -1,6 +1,6 @@
 from random import randint
 
-print("INSERT INTO [scPessoa].[Telefone_Pessoa] (codigo_pais, codigo_area, telefone)\nVALUES")
+print("INSERT INTO [scPessoa].[Telefone] (codigo_pais, codigo_area, telefone)\nVALUES")
 
 for var_x in range(1000):
     var_codigo_pais = randint(1, 99)

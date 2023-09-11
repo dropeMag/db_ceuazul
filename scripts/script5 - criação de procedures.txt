@@ -1,0 +1,24 @@
+--	inserir pedidos de produtos na associativa [Reserva_Bar]
+CREATE PROCEDURE [scReserva].proc_insert_ReservaBar
+	@id_reserva INT,
+	@id_produto TINYINT,
+	@num_quantidade TINYINT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @select_row TINYINT;
+	SET @select_row = (SELECT num_pedidos 
+					   FROM [scReserva].[Reserva_Bar] 
+					   WHERE id_reserva = @id_reserva AND
+							 id_produto = @id_produto);
+
+	IF (@select_row IS NULL)
+		INSERT INTO [scReserva].[Reserva_Bar]
+		VALUES 	(@id_reserva, @id_produto, @num_quantidade);
+	ELSE
+		UPDATE [scReserva].[Reserva_Bar]
+		SET num_pedidos = (@select_row + @num_quantidade)
+		WHERE id_reserva = @id_reserva AND id_produto = @id_produto
+END
+GO
