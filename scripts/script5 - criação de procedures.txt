@@ -22,3 +22,31 @@ BEGIN
 		WHERE id_reserva = @id_reserva AND id_produto = @id_produto
 END
 GO
+
+
+--	select * from [scReserva].[Reserva]
+--	inserir hóspedes dependentes em [scHospede].[Hospede]
+CREATE PROCEDURE [scHospede].proc_insert_HospedeDependente
+	@id_responsavel INT,
+	@nome VARCHAR(20),
+	@sobrenome VARCHAR(80),
+	@dt_nascimento DATE,
+	@cpf BIGINT NULL,
+	@rg INT NULL,
+	@sexo CHAR(1)
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	IF (SELECT id_hospede FROM [scHospede].[Hospede] WHERE id_hospede = @id_responsavel) IS NULL
+		--MENSAGEM DE ERRO;
+
+	DECLARE @resp_email INT;
+	DECLARE @resp_telefone INT;
+	DECLARE @resp_endereco INT;
+
+	SET @resp_email = ()
+	SET @resp_telefone =
+	SET @resp_endereco =
+END
+GO

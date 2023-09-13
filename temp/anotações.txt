@@ -74,6 +74,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 - TORNAR OS DEPÓSITOS COMO UNIQUES
 
+- impedir que os hóspedes dependentes recebam algum tipo de classificação
+
 - trigger para impedir que existam id_conta(funcionários) iguais, desde que não seja NULL
 
 - criar uma tabela de despesas adicionais (Reserva_Despesa | id_reserva, despesa (VARCHAR 30), valor (DECIMAL 5, 2))

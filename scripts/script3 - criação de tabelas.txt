@@ -298,7 +298,7 @@ CREATE TABLE [scReserva].[Reserva](
 	hospede_principal INT NOT NULL,
 	num_hospede TINYINT NOT NULL,
 	id_quarto TINYINT NOT NULL,
-	id_pagamento TINYINT NOT NULL,
+	id_pagamento TINYINT NULL,
 	id_contato TINYINT NOT NULL,
 	valor_total DECIMAL(7, 2) NULL,
 	status BIT DEFAULT(1) NOT NULL,
