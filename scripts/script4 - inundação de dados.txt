@@ -7081,3 +7081,37 @@ VALUES
     ('2024-04-28 00:00:00', '2024-04-29 00:00:00', '94', NULL, '199', '1', '9', NULL, '4', NULL, '0', '6'),
     ('2024-04-28 00:00:00', '2024-04-29 00:00:00', '202', '277', '200', '1', '10', '1', '4', '8177', '0', NULL)
 GO
+
+
+INSERT INTO [scEstalagem].[Servico] (descricao, valor)
+VALUES
+	('academia', 2.80), -- por hora
+	('estacionamento', 4.00), -- por dia
+	('office room', 2.50), -- por hora
+	('camas extras', 12.00), -- por cama
+	('sinuca', 2.00), -- por ficha
+	('totó', 2.00), -- por ficha
+	('ping pong', 8.00) -- por bola
+GO
+
+
+INSERT INTO [scEstalagem].[Cardapio_Bar] (descricao, valor)
+VALUES
+	('aperitivo 1', 10.00),
+	('aperitivo 2', 10.00),
+	('aperitivo 3', 10.00),
+	('comida 1', 20.00),
+	('comida 2', 20.00),
+	('comida 3', 20.00),
+	('comida 4', 20.00),
+	('comida 5', 20.00),
+	('bebida 1', 15.00),
+	('bebida 2', 25.00),
+	('bebida 3', 35.00),
+	('bebida 4', 45.00),
+	('bebida 5', 55.00),
+	('sobremesa 1', 14.00),
+	('sobremesa 2', 24.00),
+	('sobremesa 3', 34.00),
+	('sobremesa 4', 44.00)
+GO

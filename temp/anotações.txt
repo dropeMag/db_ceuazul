@@ -72,7 +72,11 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-- TORNAR OS DEPÓSITOS COMO UNIQUES
+- cria uma function que gere uma conta para um funcionario e automaticamente já coloca no INSERT dentro da procedure 
+
+- TORNAR OS DEPÓSITOS_FUNCIONARIO COMO UNIQUES (SP)
+
+- criar duas sp para o encerramento de uma reserva (a primeira realizará o cálculo do valor_final, incluirá a data, o funcionário e a forma de pagamento. o outro irá confirmar o encerramento da reserva | no documento, informe que no sistema de back-end haverá um código para essa confirmação de encerramento)
 
 - impedir que os hóspedes dependentes recebam algum tipo de classificação
 
@@ -114,12 +118,14 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 - criar um sistema que ofereça um desconto (15% no valor final?) para os funcionários que se hospedarem no hotel (sp que verifica se o cpf do funcionário está na lista de funcionários e está ativo)
 
-- arrumar modelo conceitual
+- as tabelas RESERVA_BAR E RESERVA_SERVICO poderiam ter uma área com os dias e horários solicitados (Uma nota fiscal) || e se eu simulasse a criação de um nota fiscal? criando uma tabela com id_reserva, imagem da nota e criar (no Python ou em tese) um código que gere a nota
+
 
 
 tabelas:
 - ponto
 - promoções da empresa
+
 
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

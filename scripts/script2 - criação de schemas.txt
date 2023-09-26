@@ -12,3 +12,6 @@ GO
 
 CREATE SCHEMA scReserva
 GO
+
+CREATE SCHEMA scSistema
+GO

@@ -163,7 +163,7 @@ CREATE TABLE [scHospede].[Hospede](
 	sexo CHAR(1) NOT NULL,
 	id_email INT MASKED WITH (FUNCTION = 'default()') NULL,
 	id_telefone INT MASKED WITH (FUNCTION = 'default()') NULL,
-	id_endereco INT MASKED WITH (FUNCTION = 'default()') NULL,	
+	id_endereco INT MASKED WITH (FUNCTION = 'default()') NULL,
 	responsavel INT NULL,
 	hospede_retido bit NULL,
 	observacao VARCHAR(255) NULL,
@@ -332,6 +332,20 @@ CONSTRAINT fk_id_contato_reserva
 CONSTRAINT fk_id_cancelamento
 	FOREIGN KEY (id_cancelamento)
 	REFERENCES [scReserva].[Tipo_Cancelamento](id_tp_cancelamento)
+)
+GO
+
+
+CREATE TABLE [scReserva].[Reserva_Despesa](
+	id_despesa INT IDENTITY NOT NULL,
+	id_reserva INT NOT NULL,
+	despesa VARCHAR(255) NOT NULL,
+	valor DECIMAL(5, 2) NOT NULL,
+CONSTRAINT pk_id_despesa
+	PRIMARY KEY (id_despesa),
+CONSTRAINT fk_id_reserva_despesa
+	FOREIGN KEY (id_reserva)
+	REFERENCES [scReserva].[Reserva](id_reserva)
 )
 GO
 
