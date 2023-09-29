@@ -298,7 +298,7 @@ BEGIN
 
 	DECLARE @select_funcionario SMALLINT
 
-	SET @select_funcionario = (SELECT id_funcionario FROM [scFuncionario].[Funcionario]
+	SET @select_funcionario = (SELECT id_funcionario FROM [scFuncionario].[Contrato_Funcionario]
 								WHERE id_funcionario = @id_funcionario)
 	
 	IF (@select_funcionario) IS NOT NULL
@@ -423,7 +423,7 @@ BEGIN
 
 				INSERT INTO [scFuncionario].[Funcionario] (nome, sobrenome, dt_nascimento, cpf, rg, sexo, id_email, id_telefone,
 															contato_emergencia, id_endereco, id_funcao, id_deposito, id_conta, status, observacao)
-				VALUES (@novo_nome, @novo_sobrenome, @novo_dt_nascimento, @novo_cpf, @novo_rg, @novo_sexo,@novo_email, @novo_telefone,
+				VALUES (@novo_nome, @novo_sobrenome, @novo_dt_nascimento, @novo_cpf, @novo_rg, @novo_sexo, @novo_email, @novo_telefone,
 						@contato_emergencia, @novo_endereco, @id_funcao, @novo_deposito, @create_conta, 1, @observacao)
 
 			COMMIT TRAN tran_insert_funcionario
@@ -440,104 +440,130 @@ BEGIN
 END
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---	inserir hóspedes dependentes em [scHospede].[Hospede]
-CREATE PROCEDURE [scHospede].proc_insert_HospedeDependente
-	@id_responsavel INT,
-	@nome VARCHAR(20),
-	@sobrenome VARCHAR(80),
-	@dt_nascimento DATE,
-	@cpf BIGINT NULL,
-	@rg INT NULL,
-	@sexo CHAR(1)
+--	insere um novo hóspede em [scHospede].[Hospede] e informa sua categoria em [scHospede].[Hospede_Classe]
+CREATE PROCEDURE [scHospede].[proc_insert_HospedePrincipal]
+	@novo_nome VARCHAR(20),
+	@novo_sobrenome VARCHAR(80),
+	@novo_dt_nascimento DATE,
+	@novo_cpf BIGINT,
+	@novo_rg INT,
+	@novo_sexo CHAR(1),
+	@novo_email INT,
+	@novo_telefone INT,
+	@novo_endereco INT,
+	@id_td_hospede TINYINT,
+	@observacao VARCHAR(255),
+	@retornar_id INT OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	IF (SELECT id_hospede FROM [scHospede].[Hospede] WHERE id_hospede = @id_responsavel) IS NULL
-		--MENSAGEM DE ERRO;
+	DECLARE @select_cpf BIGINT, @select_email INT, @select_telefone INT, @select_tp_hospede TINYINT
 
-	DECLARE @resp_email INT;
-	DECLARE @resp_telefone INT;
-	DECLARE @resp_endereco INT;
+	SET @select_cpf = (SELECT cpf FROM [scHospede].[Hospede] WHERE cpf = @novo_cpf)
+	SET @select_email = (SELECT id_email FROM [scHospede].[Hospede] WHERE id_email = @novo_email)
+	SET @select_telefone = (SELECT id_telefone FROM [scHospede].[Hospede] WHERE id_telefone = @novo_telefone)
+	SET @select_tp_hospede = (SELECT id_tp_hospede FROM [scHospede].[Tipo_Hospede] WHERE id_tp_hospede = @id_td_hospede)
 
-	SET @resp_email = ()
-	SET @resp_telefone =
-	SET @resp_endereco =
+	IF (@select_cpf) IS NOT NULL
+		-- levanta um erro caso o cpf já esteja cadastrado
+		RAISERROR('Cpf já cadastrado para outro hóspede.', 16, 1);
+	ELSE IF (@select_email) IS NOT NULL
+		-- levanta um erro caso o id_email já esteja cadastrado
+		RAISERROR('Email já cadastrado para outro hóspede.', 16, 1);
+	ELSE IF (@select_telefone) IS NOT NULL
+		-- levanta um erro caso o id_telefone já esteja cadastrado
+		RAISERROR('Telefone já cadastrado para outro hóspede.', 16, 1);
+	ELSE IF (@select_tp_hospede) IS NULL
+		-- levanta um erro caso o tipo_hospede seja inválido
+		RAISERROR('A categoria informada é inválida.', 16, 1);
+	ELSE IF (DATEDIFF(YEAR, @novo_dt_nascimento, GETDATE())) < 18
+		-- levanta um erro caso o hóspede não seja de maior
+		RAISERROR('Não é permitido que menores de idade se hospedem.', 16, 1);
+	ELSE IF (LOWER(@novo_sexo) NOT IN ('m', 'f'))
+		-- levanta um erro caso o sexo não seja masculino ou feminino
+		RAISERROR('Sexo informado não é válido.', 16, 1);
+	ELSE IF @novo_nome IS NULL OR
+			@novo_sobrenome IS NULL OR
+			@novo_dt_nascimento IS NULL OR
+			@novo_cpf IS NULL OR
+			@novo_rg IS NULL OR
+			@novo_sexo IS NULL OR
+			@novo_email IS NULL OR
+			@novo_telefone IS NULL OR
+			@novo_endereco IS NULL OR
+			@id_td_hospede IS NULL
+		-- levanta um erro caso algum desses parâmetros seja NULL
+		RAISERROR('Todas as informações são obrigatórias.', 16, 1);
+	ELSE
+		--	realiza um novo insert
+		BEGIN TRY
+			BEGIN TRAN tran_insert_hospede
+				INSERT INTO [scHospede].[Hospede] (nome, sobrenome, dt_nascimento, cpf, rg, sexo, id_email, id_telefone, id_endereco, observacao)
+				VALUES (@novo_nome, @novo_sobrenome, @novo_dt_nascimento, @novo_cpf, @novo_rg, @novo_sexo, @novo_email, @novo_telefone, @novo_endereco, @observacao)
+
+				SET @retornar_id = SCOPE_IDENTITY()
+
+				INSERT INTO [scHospede].[Hospede_Classe] (id_hospede, id_tp_hospede)
+				VALUES (@retornar_id, @id_td_hospede)
+
+			COMMIT TRAN tran_insert_hospede
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_insert_hospede
+
+			EXEC [scSistema].[proc_select_Error]
+
+			RETURN
+		END CATCH
+END
+
+
+--	inserir hóspedes dependentes em [scHospede].[Hospede]
+CREATE PROCEDURE [scHospede].[proc_insert_HospedeDependente]
+	@id_responsavel INT,
+	@novo_nome VARCHAR(20),
+	@novo_sobrenome VARCHAR(80),
+	@novo_dt_nascimento DATE,
+	@novo_cpf BIGINT,
+	@novo_rg INT,
+	@novo_sexo CHAR(1),
+	@observacao VARCHAR(255)
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @select_responsavel INT
+
+	SET @select_responsavel = (SELECT id_hospede FROM [scHospede].[Hospede] WHERE (id_hospede = @id_responsavel) AND 
+																					(responsavel IS NULL) AND 
+																					(cpf IS NOT NULL) AND 
+																					(id_email IS NOT NULL) AND 
+																					(id_telefone IS NOT NULL) AND 
+																					(id_endereco IS NOT NULL))
+
+	IF (@select_responsavel) IS NULL
+		-- levanta um erro caso o hóspede não exista
+		RAISERROR('O hóspede não existe ou não possue todos os dados obrigatórios.', 16, 1);
+	ELSE IF (LOWER(@novo_sexo) NOT IN ('m', 'f'))
+		-- levanta um erro caso o sexo não seja masculino ou feminino
+		RAISERROR('Sexo informado não é válido.', 16, 1);
+	ELSE
+		--	realiza um novo insert
+		BEGIN TRY
+			BEGIN TRAN tran_insert_dependente
+
+				INSERT INTO [scHospede].[Hospede] (nome, sobrenome, dt_nascimento, cpf, rg, sexo, responsavel, observacao)
+				VALUES (@novo_nome, @novo_sobrenome, @novo_dt_nascimento, @novo_cpf, @novo_rg, @novo_sexo, @id_responsavel, @observacao)
+
+			COMMIT TRAN tran_insert_dependente
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_insert_dependente
+
+			EXEC [scSistema].[proc_select_Error]
+
+			RETURN
+		END CATCH
 END
 GO

@@ -72,15 +72,22 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-- cria uma function que gere uma conta para um funcionario e automaticamente já coloca no INSERT dentro da procedure 
+- scEstalagem -> scGestao
+- os tipos em scReserva vão para scOperacao
 
-- TORNAR OS DEPÓSITOS_FUNCIONARIO COMO UNIQUES (SP)
+- SÓ DÊ DELETE PARA QUEM É DA TI
+
+- TRIGGER: impeça que um funcionário seja demitido sem justificativa
+
+- Na sp ALTER EMAIL, TELEFONE E ENDERECO criar sps específicas só para funcionário e só para hóspede
+
+- Impedir que dependentes tenham uma classificacao (trigger)
 
 - criar duas sp para o encerramento de uma reserva (a primeira realizará o cálculo do valor_final, incluirá a data, o funcionário e a forma de pagamento. o outro irá confirmar o encerramento da reserva | no documento, informe que no sistema de back-end haverá um código para essa confirmação de encerramento)
 
 - impedir que os hóspedes dependentes recebam algum tipo de classificação
 
-- trigger para impedir que existam id_conta(funcionários) iguais, desde que não seja NULL
+- trigger para impedir que existam id_conta(na tabela funcionário) iguais, desde que não seja NULL
 
 - criar uma tabela de despesas adicionais (Reserva_Despesa | id_reserva, despesa (VARCHAR 30), valor (DECIMAL 5, 2))
 
@@ -147,6 +154,81 @@ Documentação Completa: Complete a documentação do seu projeto, incluindo des
 Implementar Segurança: Defina permissões de usuário para garantir que apenas as pessoas autorizadas tenham acesso e as ações apropriadas no banco de dados.
 
 Backup e Monitoramento: Implemente rotinas regulares de backup do banco de dados e estabeleça processos de monitoramento para garantir a saúde do sistema.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Marketing (gerente e analista) - views de bar e serviço
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

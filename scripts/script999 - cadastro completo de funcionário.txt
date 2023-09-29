@@ -1,0 +1,78 @@
+-- Código para a realização de cadastro de um novo funcionário
+
+--	variáveis contendo primary keys
+DECLARE @var_email INT, 
+		@var_telefone INT, 
+		@var_contato_emergencia INT,
+		@var_endereco INT,
+		@var_deposito SMALLINT,
+		@var_funcionario SMALLINT
+
+BEGIN TRY
+	BEGIN TRAN tran_insert_NovoFuncionario
+		EXEC [scPessoa].[proc_insert_Email] 'emailexemplo@gmail.com',
+											NULL,
+											@var_email OUTPUT
+
+
+		EXEC [scPessoa].[proc_insert_Telefone] 11,
+												11,
+												111111111,
+												NULL,
+												@var_telefone OUTPUT
+
+
+		EXEC [scPessoa].[proc_insert_Telefone] 11,
+												11,
+												111111112,
+												NULL,
+												@var_contato_emergencia OUTPUT
+
+
+		EXEC [scPessoa].[proc_inserir_Endereco] 'País',
+												'Estado',
+												'Cidade',
+												'Bairro',
+												'Rua',
+												11,
+												NULL,
+												11111111,
+												NULL,
+												@var_endereco OUTPUT
+
+
+		EXEC [scFuncionario].[proc_insert_DepositoFuncionario] 111111111,
+																111,
+																1,
+																'Nome de Banco',
+																@var_deposito OUTPUT
+
+
+		EXEC [scFuncionario].[proc_inserir_Funcionario] 'Primeiro Nome',
+														'Sobrenome Completo',
+														'2001-01-01',
+														11111111111,
+														1111111,
+														'm',
+														@var_email, 
+														@var_telefone,
+														@var_contato_emergencia,
+														@var_endereco,
+														1,
+														@var_deposito,
+														NULL,
+														@var_funcionario OUTPUT
+
+	COMMIT TRAN tran_insert_NovoFuncionario
+
+	EXEC [scFuncionario].[proc_insert_ContratoFuncionario] @var_funcionario,
+															'2023-05-16'
+
+	SELECT * FROM [scFuncionario].[view_Funcionario]
+
+END TRY
+BEGIN CATCH
+	ROLLBACK TRAN tran_insert_NovoFuncionario
+
+	EXEC [scSistema].[proc_select_Error]
+END CATCH

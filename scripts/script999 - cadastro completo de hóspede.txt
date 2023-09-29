@@ -1,0 +1,60 @@
+-- Código para a realização de cadastro de um novo hóspede
+
+--	variáveis contendo primary keys
+DECLARE @var_email INT, 
+		@var_telefone INT, 
+		@var_endereco INT,
+		@var_hospede SMALLINT
+
+BEGIN TRY
+	BEGIN TRAN tran_insert_NovoHospede
+		EXEC [scPessoa].[proc_insert_Email] 'emailexemplo@gmail.com',
+											NULL,
+											@var_email OUTPUT
+
+
+		EXEC [scPessoa].[proc_insert_Telefone] 11,
+												11,
+												111111111,
+												NULL,
+												@var_telefone OUTPUT
+
+
+		EXEC [scPessoa].[proc_inserir_Endereco] 'País',
+												'Estado',
+												'Cidade',
+												'Bairro',
+												'Rua',
+												11,
+												NULL,
+												11111111,
+												NULL,
+												@var_endereco OUTPUT
+
+
+		EXEC [scHospede].[proc_insert_HospedePrincipal] 'Primeiro Nome',
+														'Sobrenome Completo',
+														'2002-12-30',
+														11111111111,
+														1111111,
+														'f',
+														@var_email, 
+														@var_telefone,
+														@var_endereco,
+														1,
+														NULL,
+														@var_hospede OUTPUT
+
+	COMMIT TRAN tran_insert_NovoHospede
+
+	SELECT * FROM [scHospede].[view_Hospede]
+
+END TRY
+BEGIN CATCH
+	ROLLBACK TRAN tran_insert_NovoHospede
+
+	EXEC [scSistema].[proc_select_Error]
+END CATCH
+
+
+
