@@ -3,7 +3,7 @@ from random import randint, choice
 lst_letras = ('q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'b', 'n', 'm')
 lst_cpf = list()
 
-print("INSERT INTO [scHospede].[Hospede] (nome, sobrenome, dt_nascimento, cpf, rg, sexo, id_email, id_telefone, id_endereco)\nVALUES")
+print("INSERT INTO [scHospede].[Hospede] (nome, sobrenome, dt_nascimento, cpf, rg, sexo, email_id, telefone_id, endereco_id, categoria_id)\nVALUES")
 
 cnt_1 = 2
 
@@ -23,13 +23,14 @@ for var_x in range(500):
     var_id_endereco = cnt_1
 
     cnt_1 += 2
+    var_categoria = randint(1, 3)
 
     if var_x != 499:
         var_sep = ','
     else:
         var_sep = ''
 
-    print(f"    ('{var_nome}', '{var_sobrenome}', '{var_dt_nascimento}', '{var_cpf}', '{var_rg}', '{var_sexo}', '{var_id_email}', '{var_id_telefone}', '{var_id_endereco}'){var_sep}")
+    print(f"    ('{var_nome}', '{var_sobrenome}', '{var_dt_nascimento}', '{var_cpf}', '{var_rg}', '{var_sexo}', '{var_id_email}', '{var_id_telefone}', '{var_id_endereco}', '{var_categoria}'){var_sep}")
 
 
 print("GO")

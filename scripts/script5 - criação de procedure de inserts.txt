@@ -528,7 +528,8 @@ CREATE PROCEDURE [scHospede].[proc_insert_HospedeDependente]
 	@novo_cpf BIGINT,
 	@novo_rg INT,
 	@novo_sexo CHAR(1),
-	@observacao VARCHAR(255)
+	@observacao VARCHAR(255),
+	@retornar_id INT OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -557,6 +558,8 @@ BEGIN
 				VALUES (@novo_nome, @novo_sobrenome, @novo_dt_nascimento, @novo_cpf, @novo_rg, @novo_sexo, @id_responsavel, @observacao)
 
 			COMMIT TRAN tran_insert_dependente
+
+			SET @retornar_id = SCOPE_IDENTITY()
 		END TRY
 		BEGIN CATCH
 			ROLLBACK TRAN tran_insert_dependente
@@ -567,3 +570,274 @@ BEGIN
 		END CATCH
 END
 GO
+
+
+--	insere um novo serviço em [scEstalagem].[Servico]
+CREATE PROCEDURE [scEstalagem].[proc_insert_Servico]
+	@novo_servico VARCHAR(20),
+	@valor_servico DECIMAL(5, 2)
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @select_servico VARCHAR(20)
+
+	SET @select_servico = (SELECT id_servico FROM [scEstalagem].[Servico] WHERE LOWER(descricao) = LOWER(@novo_servico))
+
+	IF (@select_servico) IS NOT NULL
+		-- levanta um erro no caso de uma duplicidade de serviços
+		RAISERROR('O serviço já consta na base de dados.', 16, 1);
+	ELSE
+		--	realiza um novo insert
+		BEGIN TRY
+			BEGIN TRAN tran_insert_servico
+
+				INSERT INTO [scEstalagem].[Servico] (descricao, valor)
+				VALUES (@novo_servico, @valor_servico)
+
+			COMMIT TRAN tran_insert_servico
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_insert_servico
+
+			EXEC [scSistema].[proc_select_Error]
+
+			RETURN
+		END CATCH
+END
+GO
+
+
+--	insere um novo serviço em [scEstalagem].[Cardapio_Bar]
+CREATE PROCEDURE [scEstalagem].[proc_insert_ProdutoCardapio]
+	@novo_produto VARCHAR(20),
+	@valor_servico DECIMAL(5, 2)
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @select_produto VARCHAR(20)
+
+	SET @select_produto = (SELECT id_produto FROM [scEstalagem].[Cardapio_Bar] WHERE LOWER(descricao) = LOWER(@novo_produto))
+
+	IF (@select_produto) IS NOT NULL
+		-- levanta um erro no caso de uma duplicidade de produtos
+		RAISERROR('O produto já consta no cardápio.', 16, 1);
+	ELSE
+		--	realiza um novo insert
+		BEGIN TRY
+			BEGIN TRAN tran_insert_produto
+
+				INSERT INTO [scEstalagem].[Cardapio_Bar] (descricao, valor)
+				VALUES (@novo_produto, @valor_servico)
+
+			COMMIT TRAN tran_insert_produto
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_insert_produto
+
+			EXEC [scSistema].[proc_select_Error]
+
+			RETURN
+		END CATCH
+END
+GO
+
+
+--	insere tanto o hóspede principal quanto os dependentes na associativa [scReserva].[Estadia]
+CREATE PROCEDURE [scReserva].[proc_insert_Estadia]
+	@id_reserva INT,
+	@id_hospede INT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @select_row INT, @select_reserva INT, @select_hospede INT
+
+	SET @select_row = (SELECT id_reserva FROM [scReserva].[Estadia] WHERE (id_reserva = @id_reserva) AND (id_hospede = @id_hospede))
+	SET @select_reserva = (SELECT id_reserva FROM [scReserva].[Reserva] WHERE (id_reserva = @id_reserva) AND (status = 1))
+	SET @select_hospede = (SELECT id_hospede FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede) AND (hospede_retido IS NULL))
+
+	IF (@select_reserva) IS NULL
+		-- em caso da reserva não existir ou estar encerrada
+		RAISERROR('Reserva não existe ou está encerrada.', 16, 1)
+	ELSE IF (@select_hospede) IS NULL
+		-- em caso do hóspede não existir ou estar impedido de se hospedar
+		RAISERROR('Hospede não existe ou está restrito.', 16, 1)
+	ELSE IF (@select_row) IS NOT NULL
+		-- levanta erro caso o hóspede já esteja cadastrado nesta reserva
+		RAISERROR('Hospede já cadastrado.', 16, 1)
+	ELSE
+		--	realiza um novo insert
+		BEGIN TRY
+			BEGIN TRAN tran_insert_estadia
+
+				INSERT INTO [scReserva].[Estadia] (id_reserva, id_hospede)
+				VALUES (@id_reserva, @id_hospede)
+
+			COMMIT TRAN tran_insert_estadia
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_insert_estadia
+
+			EXEC [scSistema].[proc_select_Error]
+
+			RETURN
+		END CATCH
+END
+GO
+
+
+--	insere as avaliações feitas pelos clientes em [scReserva].[Avaliacao]
+CREATE PROCEDURE [scReserva].[proc_insert_Avaliacao]
+	@id_reserva INT,
+	@id_tp_contato TINYINT,
+	@novo_conforto DECIMAL(5, 2),
+	@novo_custo_benef DECIMAL(5, 2),
+	@novo_funcionario DECIMAL(5, 2),
+	@novo_localizacao DECIMAL(5, 2),
+	@novo_limpeza DECIMAL(5, 2)
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @select_row INT, -- seleciona a linha que possuem os mesmos id_reserva e id_contato
+			@select_reserva INT, @select_tp_contato INT -- verifica se eles existem
+
+	SET @select_row = (SELECT id_reserva FROM [scReserva].[Avaliacao] WHERE (id_reserva = @id_reserva) AND (id_contato = @id_tp_contato))
+	SET @select_reserva = (SELECT id_reserva FROM [scReserva].[Reserva] WHERE id_reserva = @id_reserva)
+	SET @select_tp_contato = (SELECT id_tp_contato FROM [scReserva].[Tipo_Contato] WHERE id_tp_contato = @id_tp_contato)
+
+	IF (@select_row) IS NOT NULL
+		-- impede avaliações duplicadas
+		RAISERROR('Avaliação já registrada.', 16, 1)
+	ELSE IF (@select_tp_contato) IS NULL
+		-- em caso do formato de contato não exista
+		RAISERROR('Forma de contato não válido.', 16, 1)
+	ELSE IF (@select_reserva) IS NULL
+		-- em caso da reserva não existir
+		RAISERROR('Reserva não existe.', 16, 1)
+	ELSE
+		--	realiza um novo insert
+		BEGIN TRY
+			BEGIN TRAN tran_insert_avaliacao
+
+				INSERT INTO [scReserva].[Avaliacao] (id_contato, id_reserva, conforto, custo_beneficio, funcionarios, localizacao, limpeza)
+				VALUES (@id_tp_contato, @id_reserva, @novo_conforto, @novo_custo_benef, @novo_funcionario, @novo_localizacao, @novo_limpeza)
+
+			COMMIT TRAN tran_insert_avaliacao
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_insert_avaliacao
+
+			EXEC [scSistema].[proc_select_Error]
+
+			RETURN
+		END CATCH
+END
+GO
+
+
+--	inserir pedidos de produtos na associativa [scReserva].[Reserva_Despesa]
+CREATE PROCEDURE [scReserva].[proc_insert_ReservaDespesa]
+	@id_reserva INT,
+	@novo_despesa VARCHAR(255),
+	@novo_valor DECIMAL(5, 2)
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @select_row INT, -- verifica se a despesa já foi arquivada
+			@select_reserva INT
+
+	SET @select_row = (SELECT id_despesa FROM [scReserva].[Reserva_Despesa] WHERE (id_reserva = @id_reserva) AND (LOWER(despesa) = LOWER(@novo_despesa)));
+	SET @select_reserva = (SELECT id_reserva FROM [scReserva].[Reserva] WHERE id_reserva = @id_reserva);
+
+	IF (@select_row IS NOT NULL)
+		-- evita a duplicidade de despesas
+		RAISERROR('A despesa já foi registrada no sistema.', 16, 1);
+	ELSE IF (@select_reserva IS NULL)
+		-- em caso da reserva não existir
+		RAISERROR('Reserva inexistente.', 16, 1);
+	ELSE IF (@novo_valor <= 0)
+		-- impede a inserção de valores negativos e nulos
+		RAISERROR('Não é possível inserir valores nulos ou negativos.', 16, 1);
+	ELSE 
+		-- realização de um novo insert
+		INSERT INTO [scReserva].[Reserva_Despesa] (id_reserva, despesa, valor)
+		VALUES 	(@id_reserva, @novo_despesa, @novo_valor);
+END
+GO
+
+
+--	insere uma nova reserva em [scReserva].[Reserva]
+CREATE PROCEDURE [scReserva].[proc_insert_Reserva]
+	@novo_dt_checkin DATETIME,
+	@id_funcion_checkin SMALLINT,
+	@id_hospede INT,
+	@num_hospede TINYINT,
+	@id_quarto TINYINT,
+	@id_contato TINYINT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @select_row INT, @select_funcionario TINYINT, @select_hospede INT, @select_quarto TINYINT, @select_contato TINYINT
+
+	SET @select_row = (SELECT id_reserva FROM [scReserva].[Reserva] WHERE (hospede_principal = @id_hospede) AND (data_checkin = @novo_dt_checkin) AND (id_quarto = @id_quarto))
+	SET @select_funcionario = (SELECT id_funcao FROM [scFuncionario].[Funcionario] WHERE id_funcionario = @id_funcion_checkin)
+	SET @select_hospede = (SELECT hospede_retido FROM [scHospede].[Hospede] WHERE id_hospede = @id_hospede)
+	SET @select_quarto = (SELECT status FROM [scEstalagem].[Quarto] WHERE id_quarto = @id_quarto)
+	SET @select_contato = (SELECT id_tp_contato FROM [scReserva].[Tipo_Contato] WHERE id_tp_contato = @id_contato)
+	
+	IF (@select_row IS NOT NULL)
+		-- em caso da reserva já ter sido feita
+		RAISERROR('A reserva já foi realizada.', 16, 1)
+	ELSE IF (@select_funcionario IS NULL)
+		-- em caso de um funcionário não existir
+		RAISERROR('O funcionário não existe.', 16, 1)
+	ELSE IF (@select_funcionario NOT IN (1, 13, 14))
+		-- em caso de um funcionário não altorizado tentar fazer a reserva
+		RAISERROR('O funcionário não possui altorização para fazer o cadastro.', 16, 1)
+	ELSE IF (@select_hospede IS NULL)
+		-- caso o hóspede não exista
+		RAISERROR('O hóspede não existe.', 16, 1)
+	ELSE IF (@select_hospede = 1)
+		-- caso o hóspede esteja proibido de se hospedar
+		RAISERROR('O hóspede está retido e não pode se instalar no Resort.', 16, 1)
+	ELSE IF (@num_hospede < 1)
+		-- caso não haja pelo menos 1 hóspede
+		RAISERROR('Uma reserva deve conter pelo menos 1 hóspede.', 16, 1)
+	ELSE IF (@select_quarto IS NULL)
+		-- caso o quarto não exista
+		RAISERROR('O quarto não existe.', 16, 1)
+	ELSE IF (@select_quarto = 1)
+		-- caso o quarto esteja ocupado
+		RAISERROR('O quarto já está reservado.', 16, 1)
+	ELSE IF (@select_contato IS NULL)
+		-- caso o formato de contato não exista
+		RAISERROR('O tipo de contato não existe.', 16, 1)
+	ELSE
+		--	realiza um novo insert
+		BEGIN TRY
+			BEGIN TRAN tran_insert_reserva
+
+				INSERT INTO [scReserva].[Reserva] (data_checkin, funcion_checkin, hospede_principal, num_hospede, id_quarto, id_contato, status)
+				VALUES (@novo_dt_checkin, @id_funcion_checkin, @id_hospede, @num_hospede, @id_quarto, @id_contato, 1)
+
+				UPDATE [scEstalagem].[Quarto]
+				SET status = 1
+				WHERE id_quarto = @id_quarto
+
+			COMMIT TRAN tran_insert_reserva
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_insert_reserva
+
+			EXEC [scSistema].[proc_select_Error]
+
+			RETURN
+		END CATCH
+END
+GO
+

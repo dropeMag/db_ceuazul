@@ -1,0 +1,90 @@
+TRIGGERS, FUNCTIONS E PROCEDURES
+
+
+
+                              TRIGGER
+- TRIGGER: impeça que um funcionário seja demitido sem justificativa
+
+- Impedir que dependentes tenham uma classificacao (trigger)
+
+- trigger para impedir que existam id_conta(na tabela funcionário) iguais, desde que não seja NULL
+
+- trigger para certificar se hospede_principal possui os requisitos necessários (não pode ser dependente, tem que ter endereço, telefone, email, cpf, rg)
+
+- verificar se o funcionário é autorizado para fazer checkin/checkout(trigger)
+
+- trigger para calcular o valor final antes de inativar uma reserva não cancelada
+
+- trigger para ter certeza que o hóspede principal não está recebendo o email, telefone ou endereço de outro hóspede principal (hóspede não dependente)
+
+- trigger para impedir o uso de qualquer estadia encerrada
+
+- trigger para analisar se existem números ou endereços duplicados (ou procedure de insert)
+
+- trigger para analisar se o número de hóspedes na associativa é o mesmo na tabela Reserva
+
+- trigger que impeça a finalização de uma reserva sem que todas as Reserva_Serviço estejam encerradas
+
+
+                              FUNCTION
+
+
+
+
+
+
+
+
+
+
+
+                              PROCEDURE
+- na procedure de criar uma nova ContaSistema, colocar nome + sobrenome + id_funcionario
+
+- Na sp ALTER EMAIL, TELEFONE E ENDERECO criar sps específicas só para funcionário e só para hóspede (assim alguém do RH não altera dos hóspedes e alguém do Atendimento não altera dos funcionárioschat, em )
+
+- criar duas sp para o encerramento de uma reserva (a primeira realizará o cálculo do valor_final, incluirá a data, o funcionário e a forma de pagamento. o outro irá confirmar o encerramento da reserva | no documento, informe que no sistema de back-end haverá um código para essa confirmação de encerramento)
+
+- criar um sistema que ofereça um desconto (15% no valor final?) para os funcionários que se hospedarem no hotel (sp que verifica se o cpf do funcionário está na lista de funcionários e está ativo)
+
+- na procedure de inserir uma despesa, certificar que a dt_despesa seja depois do checkin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

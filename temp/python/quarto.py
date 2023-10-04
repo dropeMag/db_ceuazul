@@ -1,6 +1,8 @@
 from random import randint
 
-print("INSERT INTO [scEstalagem].[Quarto] (num_andar, num_camas, valor_diaria, tipo_quarto, status)\nVALUES")
+print("INSERT INTO [scGestao].[Quarto] (num_andar, num_camas,\
+ num_banheiro, num_comodo, tamanho,\
+ diaria, tipo_quarto, status)\nVALUES")
 
 cnt_piso = 1
 cnt_andar = 1
@@ -39,12 +41,17 @@ for var_x in range(30):
         cnt_piso += 1
         cnt_tipo += 1
 
+    num_banheiro = randint(1, 3)
+    num_comodo = randint(1, 3)
+    tamanho = randint(20, 30)
+
+
     if var_x != 29:
         var_sep = ','
     else:
         var_sep = ''
 
-    print(f"    ('{var_num_andar}', '{var_num_camas}', '{var_valor_diaria}', '{var_tipo_quarto}', '{var_status}'){var_sep}")
+    print(f"    ('{var_num_andar}', '{var_num_camas}', '{num_banheiro}', '{num_comodo}', '{tamanho}', '{var_valor_diaria}', '{var_tipo_quarto}', '{var_status}'){var_sep}")
 
 
 print("GO")

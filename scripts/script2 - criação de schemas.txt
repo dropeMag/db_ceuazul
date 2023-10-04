@@ -7,10 +7,16 @@ GO
 CREATE SCHEMA scHospede
 GO
 
-CREATE SCHEMA scEstalagem
+CREATE SCHEMA scGestao
 GO
 
-CREATE SCHEMA scReserva
+CREATE SCHEMA scEstadia
+GO
+
+CREATE SCHEMA scOperacao
+GO
+
+CREATE SCHEMA scFinanceiro
 GO
 
 CREATE SCHEMA scSistema

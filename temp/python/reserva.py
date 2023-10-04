@@ -1,9 +1,9 @@
 from random import randint, choice
 from datetime import datetime, timedelta
 
-print("INSERT INTO [scReserva].[Reserva] (data_checkin, data_checkout, funcion_checkin,\
- funcion_checkout, hospede_principal, num_hospede, id_quarto, id_pagamento, id_contato,\
-  valor_total, status, id_cancelamento)\nVALUES")
+print("INSERT INTO [scEstadia].[Reserva] (data_checkin, data_checkout, funcion_checkin,\
+ funcion_checkout, hospede_responsavel, num_hospede, quarto_id, pagamento_id, contato_id,\
+  valor_total, status, cancelamento_id)\nVALUES")
 
 var_data = datetime(2024, 1, 1)
 cnt_dias = randint(1, 7)
@@ -19,7 +19,7 @@ for var_x in range(700):
 
     var_data_checkin = var_data
     var_data_checkout = var_data + timedelta(days=cnt_dias)
-    var_funcion_checkin = randint(21, 320)
+    var_funcion_checkin = randint(1000, 1499)
 
     if var_x < 500:
         var_hospede_principal = var_x + 1
@@ -37,7 +37,7 @@ for var_x in range(700):
         var_valor_total = 'NULL'
         var_id_pagamento = 'NULL'
     else:
-        var_funcion_checkout = f"'{randint(21, 320)}'"
+        var_funcion_checkout = f"'{randint(1000, 1499)}'"
         var_valor_total = f"'{randint(1111, 9999)}'"
         var_id_pagamento = f"'{randint(1, 4)}'"
 

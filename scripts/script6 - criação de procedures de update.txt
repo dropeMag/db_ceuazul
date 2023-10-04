@@ -1,0 +1,60 @@
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	UPDATE scPessoa
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
+CREATE PROCEDURE [scPessoa].[ProcUpdate_Email]
+	@id_email INT,
+	@novo_email VARCHAR(80),
+	@novo_observacao VARCHAR(150)
+AS
+BEGIN
+	/*
+	Atualização de email
+
+	1º passo: é verificado se o @id_email existe e se o @novo_email ainda não está registrado
+	2º passo: em caso de parâmetros NULL, eles receberam os valores antigos do @id_email
+	3º passo: realização de filtragem com IF's para averiguar se está tudo nos conformes
+	4º passo: atualização do email
+	*/
+
+	SET NOCOUNT ON
+
+-- 1º passo
+	DECLARE @select_id INT = (SELECT id_email FROM [scPessoa].[Email] WHERE id_email = @id_email), 
+			@select_email VARCHAR(80) = (SELECT email FROM [scPessoa].[Email] WHERE LOWER(email) = LOWER(@novo_email))
+
+-- 2º passo
+	IF (@novo_email IS NULL) SET @novo_email = (SELECT email FROM [scPessoa].[Email] WHERE id_email = @id_email)
+	IF (@novo_observacao IS NULL) SET @novo_observacao = (SELECT observacao FROM [scPessoa].[Email] WHERE id_email = @id_email)
+
+-- 3º passo
+	IF (@select_id IS NULL)
+		RAISERROR('O id_email não existe.', 16, 1);
+
+	ELSE IF (@select_email IS NOT NULL)
+		RAISERROR('Este email já foi cadastrado.', 16, 1);
+
+	ELSE IF (@novo_email NOT LIKE '%[A-Za-z0-9][@][A-Za-z0-9]%[A-Za-z0-9][.][A-Za-z0-9]%')
+		RAISERROR('Este email não é válido.', 16, 1);
+
+-- 4º passo
+	ELSE
+		BEGIN TRY
+			BEGIN TRAN tran_update_email
+
+				UPDATE [scPessoa].[Email]
+				SET email = LOWER(@novo_email),
+					observacao = LOWER(@novo_observacao)
+				WHERE id_email = @id_email
+
+			COMMIT TRAN tran_update_email
+		END TRY
+
+		BEGIN CATCH
+			ROLLBACK TRAN tran_update_email
+
+			EXEC [scSistema].[proc_select_Error]
+
+			RETURN
+		END CATCH
+END

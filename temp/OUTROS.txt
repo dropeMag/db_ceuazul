@@ -1,0 +1,65 @@
+OUTROS
+
+
+
+- SÓ DÊ DELETE PARA QUEM É DA TI
+
+- separar imagens do banco de dados(png) por schemas e colocar no documento
+
+- Na tabela RESERVA, na parte do back end, um sistema irá calcular quantos hóspedes foram colocados em uma reserva. Se confirmado o número, ele irá para a coluna ´num_hospedes´ na tabela Reserva e os hóspedes serão atribuidos a essa reserva na associativa Estadia. Em seguida, uma trigger é ativada para verificar se os números batem
+
+- anotar no documento que a pousada tem 30 quartos e 5 andares (6 quartos em cada andar); no térreo está a recepção, bar, office room e academia; falar que cada quarto é numerado de 101 a 130
+
+- no sistema, ao colocar o nome de um hóspede, aparece uma lista com nomes similares de hóspedes dependentes. Caso um desses hóspedes dependentes seja o hóspede sendo cadastrado, um alter é feito
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

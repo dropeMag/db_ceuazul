@@ -1,0 +1,11 @@
+ALTERAÇÕES DE DATABASE
+
+
+conceitual scFuncionario: tá faltando tabela HistoricoAlteracao
+conceitula scFuncionario: conectar Cargo com Servico
+
+conceitual scGestao: conectar Servico com Cargo
+
+conceitual sdSistema: HistoricoAlteracao faz ligação com Funcionario
+
+conceitual scEstadia: tabela ReservaServico tem que estar conectado com Servico
