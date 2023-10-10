@@ -1,9 +1,9 @@
 from random import randint, choice, uniform
 
-print("INSERT INTO [scEstadia].[Reserva_Hospede] (id_reserva, id_hospede)\nVALUES")
+print("INSERT INTO [scEstadia].[ReservaHospede] (id_reserva, id_hospede)\nVALUES")
 
 cn = 1
-cm = 701
+cm = 1
 for var_x in range(700):
     var_id_reserva = cm
     id_hospede = cn
@@ -29,9 +29,9 @@ print(" ")
 
 
 
-cm = 701
+cm = 1
 
-print("INSERT INTO [scEstadia].[Reserva_Servico] (id_reserva, id_servico, num_solicitacao, funcionario_id, dt_solicitacao)\nVALUES")
+print("INSERT INTO [scEstadia].[ReservaServico] (id_reserva, id_servico, num_solicitacao, funcionario_id, dt_solicitacao)\nVALUES")
 
 for var_x in range(700):
     var_id_reserva = cm
@@ -55,10 +55,10 @@ print("GO")
 print(" ")
 print(" ")
 
-cm = 701
+cm = 1
 
 
-print("INSERT INTO [scEstadia].[Reserva_Bar] (id_reserva, id_produto, num_pedidos)\nVALUES")
+print("INSERT INTO [scEstadia].[ReservaBar] (id_reserva, id_produto, num_pedidos)\nVALUES")
 
 for var_x in range(700):
     var_id_reserva = cm

@@ -1,60 +1,533 @@
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-	UPDATE scPessoa
+	UPDATE scFuncionario
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
 
-CREATE PROCEDURE [scPessoa].[ProcUpdate_Email]
-	@id_email INT,
-	@novo_email VARCHAR(80),
-	@novo_observacao VARCHAR(150)
+CREATE PROCEDURE [scFuncionario].[procUpdate_FuncionarioUpdate]
+	@id_funcionario SMALLINT,
+	@novo_nome VARCHAR(50),
+	@novo_sobrenome VARCHAR(100),
+	@novo_sexo CHAR(1),
+	@novo_contatoemerg INT,
+	@novo_conta SMALLINT,
+	@novo_foto VARCHAR(1000),
+	@novo_observacao VARCHAR(255)
 AS
 BEGIN
 	/*
-	Atualização de email
+	Atualização de dados de um Funcionário
 
-	1º passo: é verificado se o @id_email existe e se o @novo_email ainda não está registrado
-	2º passo: em caso de parâmetros NULL, eles receberam os valores antigos do @id_email
-	3º passo: realização de filtragem com IF's para averiguar se está tudo nos conformes
-	4º passo: atualização do email
+	1º passo: em caso de parâmetros nulos, estes recebem os valores antigos do funcionário
+	2º passo: criação de variáveis que verificam se os dados são válidos
+	3º passo: 
+		- verifica se o funcionário existe
+		- verifica se o sexo é válido
+		- verifica se a nova conta já não pertence a outro funcionário
+	4º passo: atualiza os dados na tabela
+	*/
+	
+	SET NOCOUNT ON
+
+-- 1º passo
+	IF (@novo_nome IS NULL) SET @novo_nome = (SELECT nome FROM [scFuncionario].[Funcionario] WHERE (id_funcionario = @id_funcionario))
+	IF (@novo_sobrenome IS NULL) SET @novo_sobrenome = (SELECT sobrenome FROM [scFuncionario].[Funcionario] WHERE (id_funcionario = @id_funcionario))
+	IF (@novo_sexo IS NULL) SET @novo_sexo = (SELECT sexo FROM [scFuncionario].[Funcionario] WHERE (id_funcionario = @id_funcionario))
+	IF (@novo_contatoemerg IS NULL) SET @novo_contatoemerg = (SELECT contato_emergencia FROM [scFuncionario].[Funcionario] WHERE (id_funcionario = @id_funcionario))
+	IF (@novo_conta IS NULL) SET @novo_conta = (SELECT conta_id FROM [scFuncionario].[Funcionario] WHERE (id_funcionario = @id_funcionario))
+	IF (@novo_foto IS NULL) SET @novo_foto = (SELECT foto_pdf FROM [scFuncionario].[Funcionario] WHERE (id_funcionario = @id_funcionario))
+	IF (@novo_observacao IS NULL) SET @novo_observacao = (SELECT observacao FROM [scFuncionario].[Funcionario] WHERE (id_funcionario = @id_funcionario))
+
+-- 2º passo
+	DECLARE @select_funcionario SMALLINT = (SELECT id_funcionario FROM [scFuncionario].[Funcionario] WHERE (id_funcionario = @id_funcionario)),
+			@select_conta SMALLINT = (SELECT conta_id FROM [scFuncionario].[Funcionario] WHERE (id_funcionario <> @id_funcionario) AND (conta_id = @novo_conta))
+
+-- 3º passo
+	IF (@select_funcionario IS NULL)
+		RAISERROR('Funcionário não encontrado.', 16, 1);
+
+	ELSE IF (LOWER(@novo_sexo) NOT IN ('m', 'f'))
+		RAISERROR('Sexo informado não é válido.', 16, 1);
+
+	ELSE IF (@select_conta IS NOT NULL)
+		RAISERROR('Essa conta já pertence a outro funcionário.', 16, 1);
+	
+-- 4º passo
+	ELSE
+		BEGIN TRY
+			BEGIN TRAN tran_update_funcionario
+
+				UPDATE [scFuncionario].[Funcionario]
+				SET nome = @novo_nome,
+					sobrenome = @novo_sobrenome,
+					sexo = LOWER(@novo_sexo),
+					contato_emergencia = @novo_contatoemerg,
+					conta_id = @novo_conta,
+					foto_pdf = @novo_foto,
+					observacao = @novo_observacao
+				WHERE id_funcionario = @id_funcionario
+						
+			COMMIT TRAN tran_update_funcionario
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_update_funcionario
+
+			EXEC [scSistema].[procSelect_Error]
+
+			RETURN
+		END CATCH
+END
+
+
+
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	UPDATE scHospede
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
+CREATE PROCEDURE [scHospede].[procUpdate_HospedeUpdate]
+	@id_hospede SMALLINT,
+	@novo_nome VARCHAR(50),
+	@novo_sobrenome VARCHAR(100),
+	@novo_sexo CHAR(1),
+	@novo_retido BIT,
+	@novo_observacao VARCHAR(255)
+AS
+BEGIN
+	/*
+	Atualização de dados de um Hóspede
+
+	1º passo: em caso de parâmetros nulos, estes recebem os valores antigos do hóspede
+	2º passo: criação de variáveis que verificam se os dados são válidos
+	3º passo: 
+		- verifica se o hóspede existe
+		- verifica se o sexo é válido
+	4º passo: atualiza os dados na tabela
+	*/
+	
+	SET NOCOUNT ON
+
+-- 1º passo
+	IF (@novo_nome IS NULL) SET @novo_nome = (SELECT nome FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede))
+	IF (@novo_sobrenome IS NULL) SET @novo_sobrenome = (SELECT sobrenome FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede))
+	IF (@novo_sexo IS NULL) SET @novo_sexo = (SELECT sexo FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede))
+	IF (@novo_retido IS NULL) SET @novo_retido = (SELECT hospede_retido FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede))
+	IF (@novo_observacao IS NULL) SET @novo_observacao = (SELECT observacao FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede))
+
+-- 2º passo
+	DECLARE @select_hospede SMALLINT = (SELECT id_hospede FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede))
+
+-- 3º passo
+	IF (@select_hospede IS NULL)
+		RAISERROR('Hóspede não encontrado.', 16, 1);
+
+	ELSE IF (LOWER(@novo_sexo) NOT IN ('m', 'f'))
+		RAISERROR('Sexo informado não é válido.', 16, 1);
+	
+-- 4º passo
+	ELSE
+		BEGIN TRY
+			BEGIN TRAN tran_update_hospede
+
+				UPDATE [scHospede].[Hospede]
+				SET nome = @novo_nome,
+					sobrenome = @novo_sobrenome,
+					sexo = LOWER(@novo_sexo),
+					hospede_retido = @novo_retido,
+					observacao = @novo_observacao
+				WHERE id_hospede = @id_hospede
+						
+			COMMIT TRAN tran_update_hospede
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_update_hospede
+
+			EXEC [scSistema].[procSelect_Error]
+
+			RETURN
+		END CATCH
+END
+
+
+
+CREATE PROCEDURE [scHospede].[procUpdate_HospedeIndependencia]
+	@id_hospede SMALLINT,
+	@novo_cpf BIGINT,
+	@novo_rg INT,
+	@novo_email INT,
+	@novo_telefone INT,
+	@novo_endereco INT,
+	@novo_categoria TINYINT,
+	@novo_observacao VARCHAR(255)
+AS
+BEGIN
+	/*
+	Atualização de dados de um Hóspede
+
+	1º passo: em caso de parâmetros nulos, estes recebem os valores antigos do hóspede
+	2º passo: criação de variáveis que verificam se os dados são válidos
+	3º passo: 
+		- verifica se o hóspede existe
+		- verifica se os dados são novos
+		- verifica se nenhum dado ficou em branco
+	4º passo: atualiza os dados na tabela
+	*/
+	
+	SET NOCOUNT ON
+
+-- 1º passo
+	IF (@novo_cpf IS NULL) SET @novo_cpf = (SELECT cpf FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede) AND (cpf IS NOT NULL))
+	IF (@novo_rg IS NULL) SET @novo_rg = (SELECT rg FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede) AND (rg IS NOT NULL))
+	IF (@novo_observacao IS NULL) SET @novo_observacao = (SELECT observacao FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede))
+
+-- 2º passo
+	DECLARE @select_hospede SMALLINT = (SELECT id_hospede FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede)),
+			@select_dependencia BIT = (SELECT responsavel_id FROM [scHospede].[Hospede] WHERE (id_hospede = @id_hospede)),
+			@select_cpf BIGINT = (SELECT cpf FROM [scHospede].[Hospede] WHERE (cpf = @novo_cpf) AND (id_hospede <> @id_hospede)),
+			@select_email INT = (SELECT email_id FROM [scHospede].[Hospede] WHERE (email_id = @novo_email)),
+			@select_telefone INT = (SELECT telefone_id FROM [scHospede].[Hospede] WHERE (telefone_id = @novo_telefone)),
+			@select_categoria TINYINT = (SELECT id_categoria FROM [scHospede].[Categoria] WHERE (id_categoria = @novo_categoria))
+
+-- 3º passo
+	IF (@select_hospede IS NULL)
+		RAISERROR('Hóspede não encontrado.', 16, 1);
+
+	ELSE IF (@select_dependencia IS NULL)
+		RAISERROR('Hóspede não se encontra como um dependente.', 16, 1);
+
+	ELSE IF (@select_cpf IS NOT NULL)
+		RAISERROR('Cpf já cadastrado para outro hóspede.', 16, 1);
+	
+	ELSE IF (@select_email IS NOT NULL)
+		RAISERROR('Email já cadastrado para outro hóspede.', 16, 1);
+	
+	ELSE IF (@select_telefone IS NOT NULL)
+		RAISERROR('Telefone já cadastrado para outro hóspede.', 16, 1);
+	
+	ELSE IF (@select_categoria IS NULL)
+		RAISERROR('A categoria informada é inválida.', 16, 1);
+
+	ELSE IF (@novo_cpf IS NULL) OR
+			(@novo_rg IS NULL) OR
+			(@novo_email IS NULL) OR
+			(@novo_telefone IS NULL) OR
+			(@novo_endereco IS NULL) OR
+			(@novo_categoria IS NULL)
+	RAISERROR('Todas as informações são obrigatórias.', 16, 1);
+
+-- 4º passo
+	ELSE
+		BEGIN TRY
+			BEGIN TRAN tran_update_hospede
+
+				UPDATE [scHospede].[Hospede]
+				SET cpf = @novo_cpf,
+					rg = @novo_rg,
+					email_id = @novo_email,
+					telefone_id = @novo_telefone,
+					endereco_id = @novo_endereco,
+					categoria_id = @novo_categoria,
+					responsavel_id = NULL,
+					observacao = @novo_observacao
+				WHERE id_hospede = @id_hospede
+						
+			COMMIT TRAN tran_update_hospede
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_update_hospede
+
+			EXEC [scSistema].[procSelect_Error]
+
+			RETURN
+		END CATCH
+END
+
+
+
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	UPDATE scEstadia
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
+CREATE PROCEDURE [scEstadia].[procUpdate_GerarValorTotal]
+	@id_reserva INT
+AS 
+BEGIN
+	/*
+	Atualização do Valor Total de uma reserva
+
+	Soma todos os gastos que uma reserva teve e coloca o valor em [scEstadia].[Reserva].[valor_total]
+	*/
+
+	SET NOCOUNT ON
+
+	DECLARE @select_valorTotal DECIMAL(7, 2) = (SELECT SUM(valor) FROM [scEstadia].[NotaFiscal] WHERE (reserva_id = @id_reserva))
+
+	UPDATE [scEstadia].[Reserva]
+	SET valor_total = @select_valorTotal
+	WHERE id_reserva = @id_reserva
+END
+GO
+
+
+
+CREATE PROCEDURE [scEstadia].[prodUpdate_ReservaUpdate]
+	@id_reserva INT,
+	@nova_data DATETIME,
+	@id_funcionario SMALLINT,
+	@novo_numhospede TINYINT,
+	@novo_quarto TINYINT
+AS
+BEGIN
+	/*
+	Atualização de dados de uma Reserva
+
+	1º passo: em caso de parâmetros nulos, os valores anteriores são colocados neles
+	2º passo: cria variáveis que verificam se os dados são válidos
+	3º passo: 
+		- verifica se a reserva existe
+		- verifica se a nova data de checkin não é inferior à antiga
+		- verifica se o funcionário existe e tem permissão de atualizar a reserva
+		- verifica se o quarto existe e se não está ocupado
+	4º passo: 
+		- atualiza os dados da reserva
+		- caso haja mudança de quarto, altera o status do antigo e do novo
 	*/
 
 	SET NOCOUNT ON
 
 -- 1º passo
-	DECLARE @select_id INT = (SELECT id_email FROM [scPessoa].[Email] WHERE id_email = @id_email), 
-			@select_email VARCHAR(80) = (SELECT email FROM [scPessoa].[Email] WHERE LOWER(email) = LOWER(@novo_email))
+	IF (@nova_data IS NULL) SET @nova_data = (SELECT data_checkin FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva))
+	IF (@novo_numhospede IS NULL) SET @novo_numhospede = (SELECT num_hospede FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva))
+	IF (@novo_quarto IS NULL) SET @novo_quarto = (SELECT quarto_id FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva))
 
 -- 2º passo
-	IF (@novo_email IS NULL) SET @novo_email = (SELECT email FROM [scPessoa].[Email] WHERE id_email = @id_email)
-	IF (@novo_observacao IS NULL) SET @novo_observacao = (SELECT observacao FROM [scPessoa].[Email] WHERE id_email = @id_email)
+	DECLARE @select_data DATETIME = (SELECT data_checkin FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva)),
+			@select_cargo SMALLINT = (SELECT cargo_id FROM [scFuncionario].[Contrato] WHERE (funcionario_id = @id_funcionario)),
+			@select_quarto BIT = (SELECT status FROM [scGestao].[Quarto] WHERE (id_quarto = @novo_quarto)),
+			@velho_quarto SMALLINT = (SELECT quarto_id FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva))
 
 -- 3º passo
-	IF (@select_id IS NULL)
-		RAISERROR('O id_email não existe.', 16, 1);
+	IF (@select_data IS NULL)
+		RAISERROR('A reserva não foi encontrada.', 16, 1)
 
-	ELSE IF (@select_email IS NOT NULL)
-		RAISERROR('Este email já foi cadastrado.', 16, 1);
+	ELSE IF (@nova_data < @select_data)
+		RAISERROR('A nova data de checkin não pode ser inferior à antiga.', 16, 1)
 
-	ELSE IF (@novo_email NOT LIKE '%[A-Za-z0-9][@][A-Za-z0-9]%[A-Za-z0-9][.][A-Za-z0-9]%')
-		RAISERROR('Este email não é válido.', 16, 1);
+	ELSE IF (@select_cargo IS NULL)
+		RAISERROR('O funcionário não existe.', 16, 1)
+
+	ELSE IF (@select_cargo NOT IN (1, 13, 14))
+		RAISERROR('O funcionário não possui autorização para atualizar a reserva.', 16, 1)
+
+	ELSE IF (@novo_numhospede < 1)
+		RAISERROR('A reserva deve ter pelo menos 1 hóspede.', 16, 1)
+
+	ELSE IF (@select_quarto IS NULL)
+		RAISERROR('O quarto não existe.', 16, 1)
+
+	ELSE IF (@select_quarto = 1) AND (@velho_quarto <> @novo_quarto)
+		RAISERROR('O quarto já está reservado.', 16, 1)
 
 -- 4º passo
 	ELSE
 		BEGIN TRY
-			BEGIN TRAN tran_update_email
+			BEGIN TRAN tran_update_reserva
 
-				UPDATE [scPessoa].[Email]
-				SET email = LOWER(@novo_email),
-					observacao = LOWER(@novo_observacao)
-				WHERE id_email = @id_email
+				UPDATE [scEstadia].[Reserva]
+				SET data_checkin = @nova_data,
+					num_hospede = @novo_numhospede,
+					quarto_id = @novo_quarto
+				WHERE id_reserva = @id_reserva
 
-			COMMIT TRAN tran_update_email
+				UPDATE [scGestao].[Quarto]
+				SET status = 0
+				WHERE id_quarto = @velho_quarto
+
+				UPDATE [scGestao].[Quarto]
+				SET status = 1
+				WHERE id_quarto = @novo_quarto
+
+			COMMIT TRAN tran_update_reserva
 		END TRY
 
 		BEGIN CATCH
-			ROLLBACK TRAN tran_update_email
+			ROLLBACK TRAN tran_update_reserva
 
-			EXEC [scSistema].[proc_select_Error]
+			EXEC [scSistema].[procSelect_Error]
 
 			RETURN
 		END CATCH
 END
+GO
+
+
+
+CREATE PROCEDURE [scEstadia].[prodUpdate_ReservaEncerramento]
+	@id_reserva INT,
+	@data_checkout DATETIME,
+	@id_funcionario SMALLINT,
+	@id_pagamento TINYINT
+AS
+BEGIN
+	/*
+	Encerramento de uma Reserva
+
+	1º passo: cria variáveis que verificam se os dados são válidos
+	2º passo: 
+		- verifica se a reserva existe e não está encerrada/cancelada
+		- verifica se o funcionário existe e tem permissão de encerrar a reserva
+		- verifica se a forma de pagamento é válida
+	3º passo: 
+		- calcula o valor da diária e adiciona na nota
+		- gera o valor total de gastos da reserva e adiciona na tabela
+		- atualiza os dados da reserva
+		- atualiza o status do quarto
+	*/
+
+	SET NOCOUNT ON
+
+-- 1º passo
+	DECLARE @select_checkin DATETIME = (SELECT data_checkin FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva) AND (status = 1) AND (cancelamento_id IS NULL)),
+			@select_cargo TINYINT = (SELECT cargo_id FROM [scFuncionario].[Contrato] WHERE (funcionario_id = @id_funcionario)),
+			@select_pagamento TINYINT = (SELECT id_pagamento FROM [scOperacao].[Pagamento] WHERE (id_pagamento = @id_pagamento)),
+			@select_quarto TINYINT = (SELECT quarto_id FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva))
+
+	DECLARE @select_diaria DECIMAL(5, 2) = (SELECT diaria FROM [scGestao].[Quarto] WHERE (id_quarto = @select_quarto)),
+			@select_numdias TINYINT
+			
+-- 2º passo
+	IF (@select_checkin IS NULL)
+		RAISERROR('Reserva não encontrada. Verifique se ela existe ou se já foi encerrada.', 16, 1)
+
+	ELSE IF (@data_checkout < @select_checkin)
+		RAISERROR('O checkout não pode ser antes do checkin.', 16, 1)
+
+	ELSE IF (@select_cargo IS NULL)
+		RAISERROR('O funcionário não existe.', 16, 1)
+
+	ELSE IF (@select_cargo NOT IN (1, 13, 14))
+		RAISERROR('O funcionário não possui autorização para encerrar a reserva.', 16, 1)
+
+	ELSE IF (@select_pagamento IS NULL)
+		RAISERROR('O formato de pagamento é inválido.', 16, 1)
+
+-- 3º passo
+	ELSE
+		BEGIN TRY
+			BEGIN TRAN tran_encerrar_reserva
+
+				SET @select_numdias = DATEDIFF(DAY, @select_checkin, @data_checkout)
+
+				INSERT INTO [scEstadia].[NotaFiscal] (reserva_id, item, valor, data)
+				VALUES (@id_reserva, CONCAT('Diária dos ', @select_numdias, ' dias'), (@select_diaria * @select_numdias), GETDATE())
+			
+				EXEC [scEstadia].[procUpdate_GerarValorTotal] @id_reserva
+
+				UPDATE [scEstadia].[Reserva]
+				SET data_checkout = @data_checkout,
+					funcion_checkout = @id_funcionario,
+					pagamento_id = @id_pagamento,
+					status = 0
+
+				WHERE id_reserva = @id_reserva
+
+				UPDATE [scGestao].[Quarto]
+				SET status = 0
+				WHERE id_quarto = @select_quarto
+
+			COMMIT TRAN tran_encerrar_reserva
+		END TRY
+
+		BEGIN CATCH
+			ROLLBACK TRAN tran_encerrar_reserva
+
+			EXEC [scSistema].[procSelect_Error]
+
+			RETURN
+		END CATCH
+END
+GO
+
+
+
+CREATE PROCEDURE [scEstadia].[prodUpdate_ReservaCancelamento]
+	@id_reserva INT,
+	@data_cancelamento DATETIME,
+	@id_funcionario SMALLINT,
+	@id_cancelamento TINYINT
+AS
+BEGIN
+	/*
+	Cancelamento de uma Reserva
+
+	1º passo: cria variáveis que verificaram se os dados são válidos
+	2º passo:
+		- verifica se a reserva existe e não está encerrada/cancelada
+		- verifica se o funcionário existe e tem permissão de cancelar a reserva
+		- verifica se a forma de cancelamento é válida
+	3º passo:
+		- calcula o valor da multa e adiciona na nota
+		- gera o valor total da reserva e adiciona na tabela
+		- atualiza os dados de cancelamento da reserva
+		- atualiza o status do quarto que estava reservado
+	*/
+
+	SET NOCOUNT ON
+
+-- 1º passo
+	DECLARE @select_reserva DATETIME = (SELECT data_checkin FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva) AND (status = 1) AND (cancelamento_id IS NULL)),
+			@select_cargo TINYINT = (SELECT cargo_id FROM [scFuncionario].[Contrato] WHERE (funcionario_id = @id_funcionario)),
+			@select_cancelamento TINYINT = (SELECT id_cancelamento FROM [scOperacao].[Cancelamento] WHERE (id_cancelamento = @id_cancelamento)),
+			@select_quarto TINYINT = (SELECT quarto_id FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva))
+
+	DECLARE @select_diaria DECIMAL(5, 2) = (SELECT diaria FROM [scGestao].[Quarto] WHERE (id_quarto = @select_quarto)),
+			@select_numdias TINYINT = DATEDIFF(DAY, @select_reserva, @data_cancelamento)
+	
+	DECLARE @valor_multa DECIMAL(7, 2) = (@select_diaria * 0.4)
+
+-- 2º passo
+	IF (@select_reserva IS NULL)
+		RAISERROR('Reserva não encontrada. Verifique se ela existe ou se já foi encerrada.', 16, 1)
+
+	ELSE IF (@select_cargo IS NULL)
+		RAISERROR('O funcionário não existe.', 16, 1)
+
+	ELSE IF (@select_cargo NOT IN (1, 13, 14))
+		RAISERROR('O funcionário não possui autorização para encerrar a reserva.', 16, 1)
+
+	ELSE IF (@select_cancelamento IS NULL)
+		RAISERROR('O formato de cancelamento é inválido.', 16, 1)
+
+-- 3º passo
+	ELSE
+		BEGIN TRY
+			BEGIN TRAN tran_cancelar_reserva
+
+				IF (@select_numdias > 0)
+					SET @valor_multa = (@valor_multa + ((@select_diaria * @select_numdias) * 0.3))
+				
+				INSERT INTO [scEstadia].[NotaFiscal] (reserva_id, item, valor, data)
+				VALUES (@id_reserva, 'Multa por cancelamento', @valor_multa, GETDATE())
+			
+				EXEC [scEstadia].[procUpdate_GerarValorTotal] @id_reserva
+
+				UPDATE [scEstadia].[Reserva]
+				SET data_checkout = @data_cancelamento,
+					funcion_checkout = @id_funcionario,
+					cancelamento_id = @id_cancelamento,
+					status = 0
+				WHERE id_reserva = @id_reserva
+
+				UPDATE [scGestao].[Quarto]
+				SET status = 0
+				WHERE id_quarto = @select_quarto
+
+			COMMIT TRAN tran_cancelar_reserva
+		END TRY
+
+		BEGIN CATCH
+			ROLLBACK TRAN tran_cancelar_reserva
+
+			EXEC [scSistema].[procSelect_Error]
+
+			RETURN
+		END CATCH		
+END
+GO

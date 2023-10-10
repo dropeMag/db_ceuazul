@@ -93,7 +93,7 @@ CREATE TABLE [scFuncionario].[Funcionario](
 	endereco_id INT MASKED WITH (FUNCTION = 'default()') NOT NULL,
 	deposito_id SMALLINT MASKED WITH (FUNCTION = 'default()') CONSTRAINT uq_deposito UNIQUE NOT NULL,
 	conta_id SMALLINT MASKED WITH (FUNCTION = 'default()') NULL,
-	foto_pdf VARCHAR(1000) UNIQUE NULL,
+	foto_pdf VARCHAR(1000) NULL,
 	status_id TINYINT DEFAULT(1) NOT NULL,
 	observacao VARCHAR(255) NULL
 CONSTRAINT pk_id_funcionario
@@ -371,7 +371,7 @@ CREATE TABLE [scEstadia].[NotaFiscal](
 	id_nota INT IDENTITY NOT NULL,
 	reserva_id INT NOT NULL,
 	item VARCHAR(255) NOT NULL,
-	valor DECIMAL(5, 2) CHECK (valor > 0) NOT NULL,
+	valor DECIMAL(7, 2) NOT NULL,
 	data DATETIME NOT NULL,
 CONSTRAINT pk_id_nota
 	PRIMARY KEY CLUSTERED (id_nota),
@@ -387,7 +387,7 @@ CREATE TABLE [scEstadia].[Despesa](
 	reserva_id INT NOT NULL,
 	despesa VARCHAR(255) NOT NULL,
 	data DATETIME NOT NULL,
-	valor DECIMAL(5, 2) CHECK (valor > 0) NOT NULL,
+	valor DECIMAL(7, 2) CHECK (valor > 0) NOT NULL,
 CONSTRAINT pk_id_despesa
 	PRIMARY KEY CLUSTERED (id_despesa),
 CONSTRAINT fk_id_reserva_despesa
@@ -416,7 +416,7 @@ CREATE TABLE [scEstadia].[ReservaServico](
 	id_reserva INT NOT NULL,
 	id_servico TINYINT NOT NULL,
 	num_solicitacao TINYINT CHECK (num_solicitacao > 0) NOT NULL,
-	funcionario_id SMALLINT NOT NULL,
+	funcionario_id SMALLINT NULL,
 	dt_solicitacao DATETIME NOT NULL,
 	dt_finalizacao DATETIME NULL,
 CONSTRAINT pk_ReservaServico

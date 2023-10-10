@@ -1,0 +1,102 @@
+CREATE PROCEDURE [scEstadia].[procDelete_NotaFiscal]
+AS
+BEGIN
+	/*
+	Exclusão de dados antigos em [scEstadia].[NotaFiscal]
+
+	Esta procedure funciona como uma atividade de rotina agendada (Agent).
+	Sua função é deletar dados com mais de 5 anos de idade.
+	*/
+
+	SET NOCOUNT ON
+
+	DECLARE @select_data DATETIME = DATEADD(YEAR, -5, GETDATE())
+
+	DELETE [scEstadia].[NotaFiscal]
+	WHERE data <= @select_data
+END
+GO
+
+
+
+CREATE PROCEDURE [scEstadia].[procDelete_ReservaBar]
+AS
+BEGIN
+	/*
+	Exclusão de dados antigos em [scEstadia].[ReservaBar]
+
+	Esta procedure funciona como uma atividade de rotina agendada (Agent).
+	Sua função é deletar dados com mais de 3 anos de idade.
+	*/
+
+	SET NOCOUNT ON
+
+	DECLARE @select_data DATETIME = DATEADD(YEAR, -3, GETDATE())
+
+	DELETE [scEstadia].[ReservaBar]
+	WHERE id_reserva IN (SELECT id_reserva FROM [scEstadia].[Reserva] WHERE (data_checkout <= @select_data))
+END
+GO
+
+
+
+CREATE PROCEDURE [scEstadia].[procDelete_ReservaServico]
+AS
+BEGIN
+	/*
+	Exclusão de dados antigos em [scEstadia].[ReservaServico]
+
+	Esta procedure funciona como uma atividade de rotina agendada (Agent).
+	Sua função é deletar dados com mais de 3 anos de idade.
+	*/
+
+	SET NOCOUNT ON
+
+	DECLARE @select_data DATETIME = DATEADD(YEAR, -3, GETDATE())
+
+	DELETE [scEstadia].[ReservaServico]
+	WHERE dt_finalizacao <= DATEADD(YEAR, -3, GETDATE())
+END
+GO
+
+
+
+CREATE PROCEDURE [scEstadia].[procDelete_ReservaHospede]
+AS
+BEGIN
+	/*
+	Exclusão de dados antigos em [scEstadia].[ReservaHospede]
+
+	Esta procedure funciona como uma atividade de rotina agendada (Agent).
+	Sua função é deletar dados com mais de 5 anos de idade.
+	*/
+
+	SET NOCOUNT ON
+
+	DECLARE @select_data DATETIME = DATEADD(YEAR, -5, GETDATE())
+
+	DELETE [scEstadia].[ReservaHospede]
+	WHERE id_reserva IN (SELECT id_reserva FROM [scEstadia].[Reserva] WHERE (data_checkout <= @select_data))
+END
+GO
+
+
+
+CREATE PROCEDURE [scFuncionario].[procDelete_FolhaPonto]
+AS
+BEGIN
+	/*
+	Exclusão de dados antigos em [scFuncionario].[FolhaPonto]
+
+	Esta procedure funciona como uma atividade de rotina agendada (Agent).
+	Sua função é deletar dados com mais de 5 anos de idade.
+	*/
+
+	SET NOCOUNT ON
+
+	DECLARE @select_data DATETIME = DATEADD(YEAR, -5, GETDATE())
+
+	DELETE [scFuncionario].[FolhaPonto]
+	WHERE (manha_entrada <= @select_data) OR (tarde_entrada <= @select_data)
+END
+GO

@@ -5,7 +5,7 @@ print("INSERT INTO [scEstadia].[Avaliacao] (id_contato, id_reserva, conforto,\
 
 for var_x in range(700):
     var_tipo_contato = randint(1, 6)
-    var_id_reserva = var_x + 701
+    var_id_reserva = var_x + 1
     var_conforto = choice(["NULL", f"{uniform(4.0, 10.0):.2}"])
     var_custo_beneficio = choice(["NULL", f"{uniform(4.0, 10.0):.2}"])
     var_funcionarios = choice(["NULL", f"{uniform(4.0, 10.0):.2}"])

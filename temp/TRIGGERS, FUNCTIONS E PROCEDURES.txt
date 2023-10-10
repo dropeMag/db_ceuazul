@@ -28,7 +28,7 @@ TRIGGERS, FUNCTIONS E PROCEDURES
 
                               FUNCTION
 
-
+- Remover todos os acentos de uma string e caracteres especiais
 
 
 
