@@ -75,11 +75,11 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-_Criar Índices e Restrições: Avalie quais índices são necessários para melhorar o desempenho das consultas e criar restrições (como chaves únicas) para garantir a integridade dos dados.
+Criar Índices e Restrições: Avalie quais índices são necessários para melhorar o desempenho das consultas e criar restrições (como chaves únicas) para garantir a integridade dos dados.
 
-Criar Procedimentos Armazenados: Crie procedimentos armazenados para executar operações complexas ou frequentes no banco de dados.
+___feito___Criar Procedimentos Armazenados: Crie procedimentos armazenados para executar operações complexas ou frequentes no banco de dados.
 
-Criar Funções e Triggers: Considere criar funções para processamento de dados e triggers para automatizar ações quando certos eventos ocorrem.
+___feito___Criar Funções e Triggers: Considere criar funções para processamento de dados e triggers para automatizar ações quando certos eventos ocorrem.
 
 Criar Views: Se necessário, crie visões para simplificar consultas complexas ou fornecer uma camada de abstração para os usuários.
 

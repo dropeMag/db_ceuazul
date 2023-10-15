@@ -836,6 +836,7 @@ END
 GO
 
 
+
 CREATE PROCEDURE [scEstadia].[procInsert_ReservaDespesa]
 	@id_reserva INT,
 	@despesa VARCHAR(255),
@@ -858,6 +859,7 @@ BEGIN
 
 -- 1º passo
 	DECLARE @select_reserva INT = (SELECT status FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva)),
+			@select_checkin DATETIME = (SELECT data_checkin FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva)),
 			@select_row INT = (SELECT id_despesa FROM [scEstadia].[Despesa] WHERE (reserva_id = @id_reserva) AND (LOWER(despesa) = LOWER(@despesa)))
 
 -- 2º passo
@@ -869,6 +871,9 @@ BEGIN
 
 	ELSE IF (@select_reserva IS NULL)
 		RAISERROR('A reserva não existe.', 16, 1)
+
+	ELSE IF (GETDATE() < @select_checkin)
+		RAISERROR('Impossível adicionar despesas antes do início da estadia.', 16, 1)
 
 	ELSE IF (@select_reserva = 0)
 		RAISERROR('A reserva já foi encerrada.', 16, 1)

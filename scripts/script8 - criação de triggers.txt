@@ -1,0 +1,145 @@
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	TRIGGER scPessoa
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
+CREATE TRIGGER [scPessoa].[trigInsert_TelefoneDuplicado]
+ON [scPessoa].[Telefone]
+AFTER INSERT
+AS
+BEGIN
+	/*
+	Duplicação de um Telefone
+	
+	A trigger verifica se um novo telefone cadastrado já consta no sistema.
+	*/
+
+	SET NOCOUNT ON
+
+	DECLARE @select_duplicata INT = (SELECT t.id_telefone FROM [scPessoa].[Telefone] t INNER JOIN [inserted] i 
+									ON  i.id_telefone <> t.id_telefone AND i.codigo_pais = t.codigo_pais AND i.codigo_area = t.codigo_area AND i.telefone = t.telefone)
+
+	IF (@select_duplicata IS NOT NULL)
+		BEGIN
+			ROLLBACK TRANSACTION; 
+			RAISERROR('Este telefone já está cadastrado.', 16, 1);
+		END
+END
+GO
+
+
+
+CREATE TRIGGER [scPessoa].[trigInsert_EnderecoDuplicado]
+ON [scPessoa].[Endereco]
+AFTER INSERT
+AS
+BEGIN
+	/*
+	Duplicação de um Endereço
+	
+	A trigger verifica se um novo endereço cadastrado já consta no sistema.
+	*/
+
+	SET NOCOUNT ON
+
+	DECLARE @select_duplicata INT = (SELECT e.id_endereco FROM [scPessoa].[Endereco] e INNER JOIN [inserted] i 
+									ON i.pais = e.pais AND i.estado = e.estado AND i.cidade = e.cidade AND i.bairro = e.bairro AND
+									i.rua = e.rua AND i.numero = e.numero AND i.complemento = e.complemento AND i.cep = e.cep)
+
+	IF (@select_duplicata IS NOT NULL)
+		BEGIN
+			ROLLBACK TRANSACTION; 
+			RAISERROR('Este endereço já está cadastrado.', 16, 1);
+		END
+END
+GO
+
+
+
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	TRIGGER scFuncionario
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
+CREATE TRIGGER [scFuncionario].[trigUpdate_ContratoEncerramento] 
+ON [scFuncionario].[Contrato]
+FOR UPDATE
+AS
+BEGIN
+	/*
+	Encerramento de Contrato
+	
+	A trigger verifica se:
+		- um funcionário foi demitido sem nenhum motivo
+		- o contrato não informa a data da demissão do funcionário
+		- se alguma informação foi deixada de lado
+	*/
+
+	SET NOCOUNT ON
+
+	DECLARE @select_data DATETIME = (SELECT TOP 1 dt_demissao FROM [scFuncionario].[Contrato]),
+			@select_motivo TINYINT = (SELECT TOP 1 demissao_id FROM [scFuncionario].[Contrato])
+
+	IF (@select_data IS NOT NULL) AND (@select_motivo IS NULL)
+		RAISERROR('Para demitir um funcionário, deve-se haver um motivo.', 16, 1)
+
+	ELSE IF (@select_data IS NULL) AND (@select_motivo IS NOT NULL)
+		RAISERROR('Para ter um motivo de demissão, é preciso a data de demissão.', 16, 1)
+
+	ELSE IF (@select_data IS NULL) AND (@select_motivo IS NULL)
+		RAISERROR('A data de demissão e um motivo devem ser informados.', 16, 1)
+END
+GO
+
+
+
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	TRIGGER scHospede
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
+CREATE TRIGGER [scHospede].[trigInsert_HospedeDependencia]
+ON [scHospede].[Hospede]
+AFTER INSERT
+AS
+BEGIN
+	/*
+	Inserção de um novo Hóspede
+
+	A trigger verifica se:
+		- um hóspede responsável está com todos os dados obrigatórios
+		- um hóspede dependente não possui uma categoria (dada apenas aos responsáveis)
+	*/
+
+	SET NOCOUNT ON
+
+	DECLARE @select_cpf BIGINT = (SELECT cpf FROM [inserted]),
+			@select_rg BIGINT = (SELECT rg FROM [inserted]),
+			@select_email INT = (SELECT email_id FROM [inserted]),
+			@select_telefone INT = (SELECT telefone_id FROM [inserted]),
+			@select_endereco INT = (SELECT endereco_id FROM [inserted]),
+			@select_categoria TINYINT = (SELECT categoria_id FROM [inserted]),
+			@select_responsavel INT = (SELECT responsavel_id FROM [inserted])
+
+	IF (@select_responsavel IS NULL) AND ((@select_cpf IS NULL) OR (@select_rg IS NULL))
+		BEGIN
+			ROLLBACK TRANSACTION; 
+			RAISERROR('Os dados pessoais devem ser preenchidos.', 16, 1);
+		END
+
+	ELSE IF (@select_responsavel IS NULL) AND ((@select_email IS NULL) OR (@select_telefone IS NULL) OR (@select_endereco IS NULL))
+		BEGIN
+			ROLLBACK TRANSACTION; 
+			RAISERROR('Os dados de contato devem ser preenchidos.', 16, 1);
+		END
+
+	ELSE IF (@select_responsavel IS NULL) AND (@select_categoria IS NULL)
+		BEGIN
+			ROLLBACK TRANSACTION; 
+			RAISERROR('O hóspede deve possuir uma categoria.', 16, 1);
+		END
+	
+	ELSE IF (@select_responsavel IS NOT NULL) AND (@select_categoria IS NOT NULL)
+		BEGIN
+			ROLLBACK TRANSACTION; 
+			RAISERROR('Um dependente não pode possuir uma categoria.', 16, 1);
+		END
+END
+GO

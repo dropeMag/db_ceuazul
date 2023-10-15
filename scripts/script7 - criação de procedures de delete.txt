@@ -1,3 +1,7 @@
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	UPDATE scEstadia
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
 CREATE PROCEDURE [scEstadia].[procDelete_NotaFiscal]
 AS
 BEGIN
@@ -81,6 +85,10 @@ END
 GO
 
 
+
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	UPDATE scFuncionario
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
 
 CREATE PROCEDURE [scFuncionario].[procDelete_FolhaPonto]
 AS

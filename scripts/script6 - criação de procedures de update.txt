@@ -78,6 +78,165 @@ END
 
 
 
+CREATE PROCEDURE [scFuncionario].[procUpdate_ContratoUpdate]
+	@id_contrato SMALLINT,
+	@novo_cargo TINYINT,
+	@novo_salario DECIMAL(7, 2),
+	@novo_valealim DECIMAL(7, 2),
+	@novo_valetran DECIMAL(7, 2),
+	@novo_contrato VARCHAR(1000)
+AS
+BEGIN
+	/*
+	Atualização de dados de um Contrato
+
+	1º passo: 
+		- em caso de parâmetros nulos, estes recebem os valores antigos do hóspede
+		- em caso de algum vale ser igual a 0, ele recebe um valor NULL
+	2º passo: criação de variáveis que verificam se os dados são válidos
+	3º passo: 
+		- verifica se o contrato existe
+		- verifica se o funcionário existe e se não está demitido
+		- verifica se o cargo é válido
+		- verifica se o arquivo em pdf do contrato não é de outro funcionário
+		- verifica se nenhum valor financeiro é negativo
+	4º passo: atualiza os dados na tabela
+	*/
+
+	SET NOCOUNT ON
+
+-- 1º passo
+	IF (@novo_cargo IS NULL) SET @novo_cargo = (SELECT cargo_id FROM [scFuncionario].[Contrato] WHERE (id_contrato = @id_contrato))
+	IF (@novo_salario IS NULL) SET @novo_salario = (SELECT salario FROM [scFuncionario].[Contrato] WHERE (id_contrato = @id_contrato))
+	IF (@novo_valealim IS NULL) SET @novo_valealim = (SELECT vale_alimentacao FROM [scFuncionario].[Contrato] WHERE (id_contrato = @id_contrato))
+	IF (@novo_valetran IS NULL) SET @novo_valetran = (SELECT vale_transporte FROM [scFuncionario].[Contrato] WHERE (id_contrato = @id_contrato))
+	IF (@novo_contrato IS NULL) SET @novo_contrato = (SELECT contrato_pdf FROM [scFuncionario].[Contrato] WHERE (id_contrato = @id_contrato))
+	
+	IF (@novo_valealim = 0) SET @novo_valealim = NULL
+	IF (@novo_valetran = 0) SET @novo_valetran = NULL
+
+-- 2º passo
+	DECLARE @select_contrato SMALLINT = (SELECT funcionario_id FROM [scFuncionario].[Contrato] WHERE (id_contrato = @id_contrato)),
+			@select_cargo TINYINT = (SELECT id_cargo FROM [scFuncionario].[Cargo] WHERE (id_cargo = @novo_cargo)),
+			@select_pdf VARCHAR(1000) = (SELECT contrato_pdf FROM [scFuncionario].[Contrato] WHERE (contrato_pdf = @novo_contrato) AND (id_contrato <> @id_contrato))
+	
+	DECLARE @select_funcionario SMALLINT = (SELECT status_id FROM [scFuncionario].[Funcionario] WHERE (id_funcionario = @select_contrato))
+
+-- 3º passo
+	IF (@select_contrato IS NULL)
+		RAISERROR('Contrato não encontrado.', 16, 1);
+
+	ELSE IF (@select_funcionario IS NULL)
+		RAISERROR('Funcionário não encontrado.', 16, 1);
+
+	ELSE IF (@select_funcionario = 2)
+		RAISERROR('O funcionário já foi desligado da empresa. Impossível alterar seus dados contratuais.', 16, 1);
+
+	ELSE IF (@select_cargo IS NULL)
+		RAISERROR('O cargo é inválido.', 16, 1);
+
+	ELSE IF (@select_pdf IS NOT NULL)
+		RAISERROR('O arquivo em pdf do contrato pertence a outro funcionário.', 16, 1);
+
+	ELSE IF (@novo_salario < 0) OR
+			(@novo_valealim < 0) OR
+			(@novo_valetran < 0)
+		RAISERROR('Valores financeiros não podem ser negativos.', 16, 1);
+		
+-- 4º passo
+	ELSE
+		BEGIN TRY
+			BEGIN TRAN tran_update_contrato
+
+				UPDATE [scFuncionario].[Contrato]
+				SET cargo_id = @novo_cargo,
+					salario = @novo_salario,
+					vale_alimentacao = @novo_valealim,
+					vale_transporte = @novo_valetran,
+					contrato_pdf = @novo_contrato
+				WHERE id_contrato = @id_contrato
+						
+			COMMIT TRAN tran_update_contrato
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_update_contrato
+
+			EXEC [scSistema].[procSelect_Error]
+
+			RETURN
+		END CATCH
+END
+
+
+
+CREATE PROCEDURE [scFuncionario].[procUpdate_ContratoEncerramento]
+	@id_contrato SMALLINT,
+	@data_demissao DATE,
+	@id_demissao TINYINT
+AS
+BEGIN
+	/*
+	Atualização de dados de um Contrato
+
+	1º passo: criação de variáveis que verificam se os dados são válidos
+	2º passo: 
+		- verifica se o contrato existe
+		- verifica se o funcionário existe e se já não está demitido
+		- verifica se o motivo de demissão é válido
+	3º passo: atualiza os dados na tabela
+	*/
+
+	SET NOCOUNT ON
+
+-- 1º passo
+	DECLARE @select_contrato SMALLINT = (SELECT funcionario_id FROM [scFuncionario].[Contrato] WHERE (id_contrato = @id_contrato)),
+			@select_dataadmissao DATE = (SELECT dt_admissao FROM [scFuncionario].[Contrato] WHERE (id_contrato = @id_contrato)),
+			@select_demissao TINYINT = (SELECT id_demissao FROM [scFuncionario].[MotivoDemissao] WHERE (id_demissao = @id_demissao))
+	DECLARE @select_funcionario SMALLINT = (SELECT status_id FROM [scFuncionario].[Funcionario] WHERE (id_funcionario = @select_contrato))
+			
+-- 2º passo
+	IF (@select_contrato IS NULL)
+		RAISERROR('Contrato não encontrado.', 16, 1);
+
+	ELSE IF (@select_funcionario IS NULL)
+		RAISERROR('Funcionário não encontrado.', 16, 1);
+
+	ELSE IF (@select_funcionario = 2)
+		RAISERROR('O funcionário já foi desligado da empresa.', 16, 1);
+
+	ELSE IF (@data_demissao < @select_dataadmissao)
+		RAISERROR('A demissão não pode ser antes da admissão.', 16, 1);
+
+	ELSE IF (@select_demissao IS NULL)
+		RAISERROR('O motivo de demissão é inválido.', 16, 1);
+		
+-- 3º passo
+	ELSE
+		BEGIN TRY
+			BEGIN TRAN tran_update_contrato
+
+				UPDATE [scFuncionario].[Contrato]
+				SET dt_demissao = @data_demissao,
+					demissao_id = @id_demissao
+				WHERE id_contrato = @id_contrato
+
+				UPDATE [scFuncionario].[Funcionario]
+				SET status_id = 2
+				WHERE id_funcionario = @select_contrato
+						
+			COMMIT TRAN tran_update_contrato
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRAN tran_update_contrato
+
+			EXEC [scSistema].[procSelect_Error]
+
+			RETURN
+		END CATCH
+END
+
+
+
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 	UPDATE scHospede
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
@@ -387,7 +546,8 @@ BEGIN
 	DECLARE @select_checkin DATETIME = (SELECT data_checkin FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva) AND (status = 1) AND (cancelamento_id IS NULL)),
 			@select_cargo TINYINT = (SELECT cargo_id FROM [scFuncionario].[Contrato] WHERE (funcionario_id = @id_funcionario)),
 			@select_pagamento TINYINT = (SELECT id_pagamento FROM [scOperacao].[Pagamento] WHERE (id_pagamento = @id_pagamento)),
-			@select_quarto TINYINT = (SELECT quarto_id FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva))
+			@select_quarto TINYINT = (SELECT quarto_id FROM [scEstadia].[Reserva] WHERE (id_reserva = @id_reserva)),
+			@select_servico INT = (SELECT TOP 1 id_reserva FROM [scEstadia].[ReservaServico] WHERE (dt_finalizacao IS NULL))
 
 	DECLARE @select_diaria DECIMAL(5, 2) = (SELECT diaria FROM [scGestao].[Quarto] WHERE (id_quarto = @select_quarto)),
 			@select_numdias TINYINT
@@ -407,6 +567,9 @@ BEGIN
 
 	ELSE IF (@select_pagamento IS NULL)
 		RAISERROR('O formato de pagamento é inválido.', 16, 1)
+
+	ELSE IF (@select_servico IS NOT NULL)
+		RAISERROR('Impossível finalizar reserva, há registro de serviços em aberto.', 16, 1)
 
 -- 3º passo
 	ELSE

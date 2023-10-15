@@ -130,8 +130,8 @@ CREATE TABLE [scFuncionario].[FolhaPonto]( -- A cada 6 meses coloca os dados em 
 	manha_saida DATETIME NULL,
 	tarde_entrada DATETIME NULL,
 	tarde_saida DATETIME NULL,
-	extra_1 DATETIME NULL,
-	extra_2 DATETIME NULL,
+	noite_entrada DATETIME NULL,
+	noite_saida DATETIME NULL,
 CONSTRAINT pk_id_folha
 	PRIMARY KEY (id_folha),
 CONSTRAINT fk_id_funcionario_ponto
@@ -155,9 +155,9 @@ CREATE TABLE [scFuncionario].[Contrato](
 	funcionario_id SMALLINT UNIQUE NOT NULL,
 	dt_admissao DATE NOT NULL,
 	cargo_id TINYINT NOT NULL,
-	salario SMALLINT MASKED WITH (FUNCTION = 'default()') NOT NULL,
-	vale_alimentacao SMALLINT MASKED WITH (FUNCTION = 'default()') NULL,
-	vale_transporte SMALLINT MASKED WITH (FUNCTION = 'default()') NULL,
+	salario DECIMAL(7, 2) MASKED WITH (FUNCTION = 'default()') NOT NULL,
+	vale_alimentacao DECIMAL(6, 2) MASKED WITH (FUNCTION = 'default()') NULL,
+	vale_transporte DECIMAL(5, 2) MASKED WITH (FUNCTION = 'default()') NULL,
 	contrato_pdf VARCHAR(1000) NULL,
 	dt_demissao DATE NULL,
 	demissao_id TINYINT NULL,

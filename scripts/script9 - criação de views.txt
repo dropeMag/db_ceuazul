@@ -1,0 +1,316 @@
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	VIEW scFuncionario
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
+CREATE VIEW [scFuncionario].[view_FuncionarioAtivo]
+WITH SCHEMABINDING
+AS
+	/*
+	Funcionários ativos
+
+	A view mostra dados importante de funcionários que ainda estão ativos na empresa
+	*/
+
+	SELECT
+		f.id_funcionario Matricula,
+		CONCAT(f.nome, ' ', f.sobrenome) NomeCompleto,
+		DATEDIFF(YEAR, f.dt_nascimento, GETDATE()) Idade,
+		CONCAT(t.codigo_pais, '+ (', t.codigo_area, ') ', t.telefone) Telefone,
+		e.email Email,
+		cr.descricao Cargo,
+		s.descricao Situacao
+	FROM [scFuncionario].[Funcionario] f
+	INNER JOIN [scPessoa].[Telefone] t
+		ON t.id_telefone = f.telefone_id
+
+	INNER JOIN [scPessoa].[Email] e
+		ON e.id_email = f.email_id
+
+	INNER JOIN [scFuncionario].[Contrato] ct
+		ON ct.funcionario_id = f.id_funcionario
+
+	LEFT JOIN [scFuncionario].[Cargo] cr
+		ON cr.id_cargo = ct.cargo_id
+
+	LEFT JOIN [scFuncionario].[Status] s
+		ON s.id_status = f.status_id
+
+	WHERE s.id_status <> 2
+GO
+
+
+CREATE VIEW [scFuncionario].[view_FuncionarioDesligado]
+WITH SCHEMABINDING
+AS
+	/*
+	Funcionários desligados
+
+	A view mostra dados importante de funcionários que não estão mais ativos na empresa
+	*/
+
+	SELECT
+		f.id_funcionario Matricula,
+		CONCAT(f.nome, ' ', f.sobrenome) NomeCompleto,
+		DATEDIFF(YEAR, f.dt_nascimento, GETDATE()) Idade,
+		CONCAT(t.codigo_pais, '+ (', t.codigo_area, ') ', t.telefone) Telefone,
+		e.email Email,
+		cr.descricao Cargo,
+		d.descricao MotivoDemissao
+	FROM [scFuncionario].[Funcionario] f
+	INNER JOIN [scPessoa].[Telefone] t
+		ON t.id_telefone = f.telefone_id
+
+	INNER JOIN [scPessoa].[Email] e
+		ON e.id_email = f.email_id
+
+	INNER JOIN [scFuncionario].[Contrato] ct
+		ON ct.funcionario_id = f.id_funcionario
+
+	LEFT JOIN [scFuncionario].[Cargo] cr
+		ON cr.id_cargo = ct.cargo_id
+
+	LEFT JOIN [scFuncionario].[MotivoDemissao] d
+		ON d.id_demissao = ct.demissao_id
+
+	WHERE ct.demissao_id IS NOT NULL
+GO
+
+
+CREATE VIEW [scFuncionario].[view_FuncionarioContrato]
+WITH SCHEMABINDING
+AS
+	/*
+	Contrato de funcionário
+
+	A view mostra informações contratuais de funcionários, tanto os ativos quanto os desligados
+	*/
+
+	SELECT
+		f.id_funcionario Matricula,
+		CONCAT(f.nome, ' ', f.sobrenome) NomeCompleto,
+		cr.descricao,
+		CONCAT('R$ ', ct.salario) Salario,
+		ct.vale_alimentacao VA,
+		ct.vale_transporte VT,
+		DATEDIFF(YEAR, ct.dt_admissao, GETDATE()) AnosEmpresa,
+		CASE
+			WHEN (ct.demissao_id IS NULL) THEN 'Ativo'
+			ELSE 'Desligado'
+		END Situacao
+	FROM [scFuncionario].[Funcionario] f
+	INNER JOIN [scFuncionario].[Contrato] ct
+		ON ct.funcionario_id = f.id_funcionario
+	LEFT JOIN [scFuncionario].[Cargo] cr
+		ON cr.id_cargo = ct.cargo_id
+GO
+
+
+
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	VIEW scGestao
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
+CREATE VIEW [scGestao].[view_ServicoInsight]
+WITH SCHEMABINDING
+AS
+	/*
+	Insights de serviços
+
+	A view mostra dados para insights sobre o funcionamento dos serviços na empresa
+	*/
+
+	SELECT
+		s.descricao Servico,
+		s.valor Valor,
+		COUNT(rs.id_servico) Solicitacoes,
+		CAST(s.valor * COUNT(rs.id_servico) * 0.2 AS DECIMAL (7, 2)) Lucro
+	FROM [scGestao].[Servico] s
+	INNER JOIN [scEstadia].[ReservaServico] rs
+		ON rs.id_servico = s.id_servico
+	GROUP BY s.descricao, s.valor
+GO
+
+
+CREATE VIEW [scGestao].[view_BarInsight]
+WITH SCHEMABINDING
+AS
+	/*
+	Insights do bar
+
+	A view mostra dados para insights sobre o comportamento dos hóspedes no bar da empresa
+	*/
+
+	SELECT
+		b.descricao Servico,
+		b.valor Valor,
+		COUNT(rb.id_produto) Pedidos,
+		CAST(b.valor * COUNT(rb.id_produto) * 0.2 AS DECIMAL (7, 2)) Lucro
+	FROM [scGestao].[Cardapio] b
+	INNER JOIN [scEstadia].[ReservaBar] rb
+		ON rb.id_produto = b.id_produto
+	GROUP BY b.descricao, b.valor
+GO
+
+
+CREATE VIEW [scGestao].[view_QuartoInsight]
+WITH SCHEMABINDING
+AS
+	/*
+	Insights dos quartos
+
+	A view mostra dados para insights sobre as reservas de quartos
+	*/
+
+	SELECT
+		(q.id_quarto + 100) NumQuarto,
+		tq.descricao TipoQuarto,
+		COUNT(r.quarto_id) Reservacoes,
+		md.MediaDias MediaReservacao,
+		q.diaria ValorDiaria,
+		CAST((q.diaria * md.MediaDias * 0.6) AS DECIMAL(7, 2)) Lucro,
+		CAST(AVG(a.conforto) AS DECIMAL(4, 2)) Conforto
+	FROM [scGestao].[Quarto] q
+	LEFT JOIN [scGestao].[TipoQuarto] tq
+		ON tq.id_tp_quarto = q.tipo_quarto
+
+	INNER JOIN [scEstadia].[Reserva] r
+		ON r.quarto_id = q.id_quarto
+
+	LEFT JOIN [scEstadia].[Avaliacao] a
+		ON a.id_reserva = r.id_reserva
+
+	INNER JOIN (SELECT quarto_id,
+						CAST(AVG(DATEDIFF(DAY, data_checkin, data_checkout)) AS DECIMAL(5)) MediaDias
+				FROM [scEstadia].[Reserva]
+				GROUP BY quarto_id) md
+		ON md.quarto_id = q.id_quarto
+
+	GROUP BY q.id_quarto, q.diaria, tq.descricao, md.MediaDias
+GO
+
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	VIEW scHospede
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
+CREATE VIEW [scHospede].[view_HospedeInsight]
+WITH SCHEMABINDING
+AS
+	/*
+	Insights de serviços
+
+	A view mostra dados para insights sobre os hóspedes, desde a sua classificação até seu comportamento
+	*/
+
+	SELECT
+		c.descricao Categoria,
+		CONCAT(h.nome, ' ', h.sobrenome) NomeCompleto,
+		DATEDIFF(YEAR, h.dt_nascimento, GETDATE()) Idade,
+		e.email Email,
+		CONCAT(t.codigo_pais, '+ (', t.codigo_area, ') ', t.telefone) Telefone,
+	
+		CASE
+			WHEN (r.NumReservas IS NULL) THEN 0 ELSE r.NumReservas
+		END NumReservas,
+	
+		CASE
+			WHEN (r.NumCancelamentos IS NULL) THEN 0 ELSE r.NumCancelamentos
+		END NumCancelamentos,
+	
+		r.GastoTotal GastoTotal,
+		r.TotalHospedes NumAcompanhantes,
+	
+		CASE
+			WHEN (d.QntDespesa IS NULL) THEN '-' ELSE CONCAT(d.QntDespesa, 'x - R$ ', d.TotalDespesa)
+		END TotalDespesas,
+
+		r.MediaDias MediaDias,
+		a.Conforto Conforto,
+		a.CustoBeneficio CustoBeneficio,
+		a.Funcionario Funcionario,
+		a.Limpeza Limpeza,
+		a.Localizacao Localizacao
+
+	FROM [scHospede].[Hospede] h
+	LEFT JOIN [scHospede].[Categoria] c
+		ON c.id_categoria = h.categoria_id
+	
+	LEFT JOIN [scPessoa].[Email] e
+		ON e.id_email = h.email_id
+
+	LEFT JOIN [scPessoa].[Telefone] t
+		ON t.id_telefone = h.telefone_id
+
+	LEFT JOIN (SELECT hospede_responsavel,
+						COUNT(id_reserva) NumReservas,
+						COUNT(cancelamento_id) NumCancelamentos,
+						SUM(valor_total) GastoTotal,
+						((AVG(num_hospede) * COUNT(id_reserva)) - COUNT(id_reserva)) TotalHospedes,
+						AVG(DATEDIFF(DAY, data_checkin, data_checkout)) MediaDias
+				FROM [scEstadia].[Reserva]
+				GROUP BY hospede_responsavel) r
+		ON r.hospede_responsavel = h.id_hospede
+
+	LEFT JOIN (SELECT r.hospede_responsavel,
+						COUNT(reserva_id) QntDespesa,
+						SUM(valor) TotalDespesa
+				FROM [scEstadia].[Despesa] d
+				LEFT JOIN [scEstadia].[Reserva] r
+					ON r.id_reserva = d.reserva_id
+				GROUP BY r.hospede_responsavel) d
+		ON d.hospede_responsavel = h.id_hospede
+
+	LEFT JOIN (SELECT r.hospede_responsavel,
+						CAST(AVG(conforto) AS DECIMAL(4, 2)) Conforto,
+						CAST(AVG(custo_beneficio) AS DECIMAL(4, 2)) CustoBeneficio,
+						CAST(AVG(funcionario) AS DECIMAL(4, 2)) Funcionario,
+						CAST(AVG(localizacao) AS DECIMAL(4, 2)) Localizacao,
+						CAST(AVG(limpeza) AS DECIMAL(4, 2)) Limpeza
+				FROM [scEstadia].[Avaliacao] a
+				LEFT JOIN [scEstadia].[Reserva] r
+					ON r.id_reserva = a.id_reserva
+				GROUP BY r.hospede_responsavel) a
+		ON a.hospede_responsavel = h.id_hospede
+
+	WHERE h.responsavel_id IS NULL
+GO
+
+
+
+/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	VIEW scEstadia
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
+
+CREATE VIEW [scEstadia].[view_ReservaInsight]
+WITH SCHEMABINDING
+AS
+	/*
+	Insights de reservas
+
+	A view mostra dados para insights sobre todas as reservas já realizadas, tanto as concluídas quanto as canceladas
+	*/
+
+	SELECT
+		(COUNT(r.id_reserva) - COUNT(r.cancelamento_id)) TotalReservas,
+		CAST(SUM(r.valor_total) * 0.6 AS DECIMAL(10, 2)) LucroTotal,
+		SUM(num_hospede) TotalHospede,
+		AVG(DATEDIFF(DAY, data_checkin, data_checkout)) MediaDias,
+		CONCAT((COUNT(r.cancelamento_id) * 100 / COUNT(r.id_reserva)), '%') TaxaCancelamento,
+		MAX(qc.descricao) PrincipalCancelamento,
+		COUNT(rs.id_servico) QntServico,
+		(SELECT SUM(valor) FROM [scFinanceiro].[Entrada]) TotalEntrada,
+		(SELECT SUM(valor) FROM [scFinanceiro].[Saida]) TotalSaida
+	FROM [scEstadia].[Reserva] r
+	LEFT JOIN (SELECT TOP 1 r.id_reserva,
+						tr.descricao Descricao,
+						COUNT(r.cancelamento_id) QntCancel
+				FROM [scEstadia].[Reserva] r
+				INNER JOIN [scOperacao].[Cancelamento] tr
+					ON tr.id_cancelamento = r.cancelamento_id
+				WHERE r.cancelamento_id IS NOT NULL
+				GROUP BY r.id_reserva, tr.descricao
+				ORDER BY QntCancel DESC) qc
+		ON qc.id_reserva = r.id_reserva
+
+	LEFT JOIN [scEstadia].[ReservaServico] rs
+		ON rs.id_reserva = r.id_reserva
+GO
